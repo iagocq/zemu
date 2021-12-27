@@ -1,5 +1,4 @@
 const std = @import("std");
-const Target = std.Target;
 
 pub fn build(b: *std.build.Builder) void {
     // Standard release options allow the person running `zig build` to select
