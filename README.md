@@ -26,13 +26,16 @@ Running as a steamclient.dll substitute is planned.
 
 # TODO
 
-- [ ] Find out the direction zig will take with comptime memory allocations.
-  - This is relevant because the binding generator *could* read directly from a JSON without requiring a separate translation step.
-  - Currently, I'll probably write a generator with TokenStream.
-  - Relevant issues:
-  - https://github.com/ziglang/zig/issues/5873
-  - https://github.com/ziglang/zig/issues/5895
-- [ ] Build a steam_api.json parser directly from the TokenStream JSON zig interface.
+- [ ] ~~Find out the direction zig will take with comptime memory allocations.~~
+  - ~~This is relevant because the binding generator *could* read directly from a JSON without requiring a separate translation step.~~
+  - ~~Currently, I'll probably write a generator with TokenStream.~~
+  - ~~Relevant issues:~~
+  - ~~https://github.com/ziglang/zig/issues/5873~~
+  - ~~https://github.com/ziglang/zig/issues/5895~~
+- [ ] ~~Build a steam_api.json parser directly from the TokenStream JSON zig interface.~~
+  - Comptime absolutely cannot handle a JSON that big.
+  - Once the self-hosted compiler lands, this will be interesting to tackle. https://github.com/ziglang/zig/issues/89
+- [ ] Create binding generator that generates Zig source code that can be imported later.
 - [ ] Implement (some) steam_api methods.
 - [ ] Figure out how to pass some Steam API to the original Steam files, so doing things like opening the overlay and using existing network functionality become possible. (CreamAPI seems to do that)
 - [ ] Write a launcher so running as a steamclient.dll substitute is possible.
