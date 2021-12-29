@@ -1,82 +1,82 @@
 const t = @import("../types.zig");
 const p = @import("std").debug.print;
-pub const SteamIPAddress_t = struct {
+pub const SteamIPAddress_t = extern struct {
     m_rgubIPv6: [16]t.uint8,
     m_eType: t.ESteamIPType,
-    fn IsSet() callconv(.C) bool {
+    pub fn IsSet() callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_SteamIPAddress_t_IsSet\n\n", .{  });
         return undefined;
     }
 };
-pub const FriendGameInfo_t = struct {
+pub const FriendGameInfo_t = extern struct {
     m_gameID: t.CGameID,
     m_unGameIP: t.uint32,
     m_usGamePort: t.uint16,
     m_usQueryPort: t.uint16,
     m_steamIDLobby: t.CSteamID,
 };
-pub const MatchMakingKeyValuePair_t = struct {
+pub const MatchMakingKeyValuePair_t = extern struct {
     m_szKey: [256]u8,
     m_szValue: [256]u8,
-    fn Construct() callconv(.C) anyopaque {
+    pub fn Construct() callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_MatchMakingKeyValuePair_t_Construct\n\n", .{  });
         return undefined;
     }
 };
-pub const servernetadr_t = struct {
+pub const servernetadr_t = extern struct {
     m_usConnectionPort: t.uint16,
     m_usQueryPort: t.uint16,
     m_unIP: t.uint32,
-    fn Construct() callconv(.C) anyopaque {
+    pub fn Construct() callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_servernetadr_t_Construct\n\n", .{  });
         return undefined;
     }
-    fn Init(ip: u32, usQueryPort: t.uint16, usConnectionPort: t.uint16) callconv(.C) anyopaque {
+    pub fn Init(ip: u32, usQueryPort: t.uint16, usConnectionPort: t.uint16) callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_servernetadr_t_Init:\n\t- ip = {any}\n\t- usQueryPort = {any}\n\t- usConnectionPort = {any}\n\n", .{ ip, usQueryPort, usConnectionPort });
         return undefined;
     }
-    fn GetQueryPort() callconv(.C) t.uint16 {
+    pub fn GetQueryPort() callconv(.C) t.uint16 {
         p("NOT IMPLEMENTED SteamAPI_servernetadr_t_GetQueryPort\n\n", .{  });
         return undefined;
     }
-    fn SetQueryPort(usPort: t.uint16) callconv(.C) anyopaque {
+    pub fn SetQueryPort(usPort: t.uint16) callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_servernetadr_t_SetQueryPort:\n\t- usPort = {any}\n\n", .{ usPort });
         return undefined;
     }
-    fn GetConnectionPort() callconv(.C) t.uint16 {
+    pub fn GetConnectionPort() callconv(.C) t.uint16 {
         p("NOT IMPLEMENTED SteamAPI_servernetadr_t_GetConnectionPort\n\n", .{  });
         return undefined;
     }
-    fn SetConnectionPort(usPort: t.uint16) callconv(.C) anyopaque {
+    pub fn SetConnectionPort(usPort: t.uint16) callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_servernetadr_t_SetConnectionPort:\n\t- usPort = {any}\n\n", .{ usPort });
         return undefined;
     }
-    fn GetIP() callconv(.C) t.uint32 {
+    pub fn GetIP() callconv(.C) t.uint32 {
         p("NOT IMPLEMENTED SteamAPI_servernetadr_t_GetIP\n\n", .{  });
         return undefined;
     }
-    fn SetIP(unIP: t.uint32) callconv(.C) anyopaque {
+    pub fn SetIP(unIP: t.uint32) callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_servernetadr_t_SetIP:\n\t- unIP = {any}\n\n", .{ unIP });
         return undefined;
     }
-    fn GetConnectionAddressString() callconv(.C) [*c]const u8 {
+    pub fn GetConnectionAddressString() callconv(.C) [*c]const u8 {
         p("NOT IMPLEMENTED SteamAPI_servernetadr_t_GetConnectionAddressString\n\n", .{  });
         return undefined;
     }
-    fn GetQueryAddressString() callconv(.C) [*c]const u8 {
+    pub fn GetQueryAddressString() callconv(.C) [*c]const u8 {
         p("NOT IMPLEMENTED SteamAPI_servernetadr_t_GetQueryAddressString\n\n", .{  });
         return undefined;
     }
-    fn IsLessThan(netadr: [*c]const t.servernetadr_t) callconv(.C) bool {
+    pub fn IsLessThan(netadr: [*c]const t.servernetadr_t) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_servernetadr_t_IsLessThan:\n\t- netadr = {any}\n\n", .{ netadr });
         return undefined;
     }
-    fn Assign(that: [*c]const t.servernetadr_t) callconv(.C) anyopaque {
+    pub fn Assign(that: [*c]const t.servernetadr_t) callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_servernetadr_t_Assign:\n\t- that = {any}\n\n", .{ that });
         return undefined;
     }
 };
-pub const gameserveritem_t = struct {
+pub const gameserveritem_t = extern struct {
     m_NetAdr: t.servernetadr_t,
     m_nPing: i32,
     m_bHadSuccessfulResponse: bool,
@@ -95,35 +95,35 @@ pub const gameserveritem_t = struct {
     m_szServerName: [64]u8,
     m_szGameTags: [128]u8,
     m_steamID: t.CSteamID,
-    fn Construct() callconv(.C) anyopaque {
+    pub fn Construct() callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_gameserveritem_t_Construct\n\n", .{  });
         return undefined;
     }
-    fn GetName() callconv(.C) [*c]const u8 {
+    pub fn GetName() callconv(.C) [*c]const u8 {
         p("NOT IMPLEMENTED SteamAPI_gameserveritem_t_GetName\n\n", .{  });
         return undefined;
     }
-    fn SetName(pName: [*c]const u8) callconv(.C) anyopaque {
+    pub fn SetName(pName: [*c]const u8) callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_gameserveritem_t_SetName:\n\t- pName = {any}\n\n", .{ pName });
         return undefined;
     }
 };
-pub const SteamPartyBeaconLocation_t = struct {
+pub const SteamPartyBeaconLocation_t = extern struct {
     m_eType: t.ESteamPartyBeaconLocationType,
     m_ulLocationID: t.uint64,
 };
-pub const SteamParamStringArray_t = struct {
+pub const SteamParamStringArray_t = extern struct {
     m_ppStrings: [*c][*c]const u8,
     m_nNumStrings: i32,
 };
-pub const LeaderboardEntry_t = struct {
+pub const LeaderboardEntry_t = extern struct {
     m_steamIDUser: t.CSteamID,
     m_nGlobalRank: i32,
     m_nScore: i32,
     m_cDetails: i32,
     m_hUGC: t.UGCHandle_t,
 };
-pub const P2PSessionState_t = struct {
+pub const P2PSessionState_t = extern struct {
     m_bConnectionActive: t.uint8,
     m_bConnecting: t.uint8,
     m_eP2PSessionError: t.uint8,
@@ -133,17 +133,17 @@ pub const P2PSessionState_t = struct {
     m_nRemoteIP: t.uint32,
     m_nRemotePort: t.uint16,
 };
-pub const InputAnalogActionData_t = struct {
+pub const InputAnalogActionData_t = extern struct {
     eMode: t.EInputSourceMode,
     x: f32,
     y: f32,
     bActive: bool,
 };
-pub const InputDigitalActionData_t = struct {
+pub const InputDigitalActionData_t = extern struct {
     bState: bool,
     bActive: bool,
 };
-pub const InputMotionData_t = struct {
+pub const InputMotionData_t = extern struct {
     rotQuatX: f32,
     rotQuatY: f32,
     rotQuatZ: f32,
@@ -155,12 +155,12 @@ pub const InputMotionData_t = struct {
     rotVelY: f32,
     rotVelZ: f32,
 };
-pub const SteamInputActionEvent_t = struct {
+pub const SteamInputActionEvent_t = extern struct {
     controllerHandle: t.InputHandle_t,
     eEventType: t.ESteamInputActionEventType,
     analogAction: t.SteamInputActionEvent_t.AnalogAction_t,
 };
-pub const SteamUGCDetails_t = struct {
+pub const SteamUGCDetails_t = extern struct {
     m_nPublishedFileId: t.PublishedFileId_t,
     m_eResult: t.EResult,
     m_eFileType: t.EWorkshopFileType,
@@ -188,70 +188,70 @@ pub const SteamUGCDetails_t = struct {
     m_flScore: f32,
     m_unNumChildren: t.uint32,
 };
-pub const SteamItemDetails_t = struct {
+pub const SteamItemDetails_t = extern struct {
     m_itemId: t.SteamItemInstanceID_t,
     m_iDefinition: t.SteamItemDef_t,
     m_unQuantity: t.uint16,
     m_unFlags: t.uint16,
 };
-pub const SteamNetworkingIPAddr = struct {
+pub const SteamNetworkingIPAddr = extern struct {
     m_ipv6: [16]t.uint8,
     m_port: t.uint16,
     pub const k_cchMaxString: i32 = 48;
-    fn Clear() callconv(.C) anyopaque {
+    pub fn Clear() callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIPAddr_Clear\n\n", .{  });
         return undefined;
     }
-    fn IsIPv6AllZeros() callconv(.C) bool {
+    pub fn IsIPv6AllZeros() callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIPAddr_IsIPv6AllZeros\n\n", .{  });
         return undefined;
     }
-    fn SetIPv6(ipv6: [*c]const t.uint8, nPort: t.uint16) callconv(.C) anyopaque {
+    pub fn SetIPv6(ipv6: [*c]const t.uint8, nPort: t.uint16) callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIPAddr_SetIPv6:\n\t- ipv6 = {any}\n\t- nPort = {any}\n\n", .{ ipv6, nPort });
         return undefined;
     }
-    fn SetIPv4(nIP: t.uint32, nPort: t.uint16) callconv(.C) anyopaque {
+    pub fn SetIPv4(nIP: t.uint32, nPort: t.uint16) callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIPAddr_SetIPv4:\n\t- nIP = {any}\n\t- nPort = {any}\n\n", .{ nIP, nPort });
         return undefined;
     }
-    fn IsIPv4() callconv(.C) bool {
+    pub fn IsIPv4() callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIPAddr_IsIPv4\n\n", .{  });
         return undefined;
     }
-    fn GetIPv4() callconv(.C) t.uint32 {
+    pub fn GetIPv4() callconv(.C) t.uint32 {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIPAddr_GetIPv4\n\n", .{  });
         return undefined;
     }
-    fn SetIPv6LocalHost(nPort: t.uint16) callconv(.C) anyopaque {
+    pub fn SetIPv6LocalHost(nPort: t.uint16) callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIPAddr_SetIPv6LocalHost:\n\t- nPort = {any}\n\n", .{ nPort });
         return undefined;
     }
-    fn IsLocalHost() callconv(.C) bool {
+    pub fn IsLocalHost() callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIPAddr_IsLocalHost\n\n", .{  });
         return undefined;
     }
-    fn ToString(buf: [*c]u8, cbBuf: t.uint32, bWithPort: bool) callconv(.C) anyopaque {
+    pub fn ToString(buf: [*c]u8, cbBuf: t.uint32, bWithPort: bool) callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIPAddr_ToString:\n\t- buf = {any}\n\t- cbBuf = {any}\n\t- bWithPort = {any}\n\n", .{ buf, cbBuf, bWithPort });
         return undefined;
     }
-    fn ParseString(pszStr: [*c]const u8) callconv(.C) bool {
+    pub fn ParseString(pszStr: [*c]const u8) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIPAddr_ParseString:\n\t- pszStr = {any}\n\n", .{ pszStr });
         return undefined;
     }
-    fn IsEqualTo(x: [*c]const t.SteamNetworkingIPAddr) callconv(.C) bool {
+    pub fn IsEqualTo(x: [*c]const t.SteamNetworkingIPAddr) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIPAddr_IsEqualTo:\n\t- x = {any}\n\n", .{ x });
         return undefined;
     }
-    fn GetFakeIPType() callconv(.C) t.ESteamNetworkingFakeIPType {
+    pub fn GetFakeIPType() callconv(.C) t.ESteamNetworkingFakeIPType {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIPAddr_GetFakeIPType\n\n", .{  });
         return undefined;
     }
-    fn IsFakeIP() callconv(.C) bool {
+    pub fn IsFakeIP() callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIPAddr_IsFakeIP\n\n", .{  });
         return undefined;
     }
 };
-pub const SteamNetworkingIdentity = struct {
+pub const SteamNetworkingIdentity = extern struct {
     m_eType: t.ESteamNetworkingIdentityType,
     m_cbSize: i32,
     m_szUnknownRawString: [128]u8,
@@ -259,116 +259,116 @@ pub const SteamNetworkingIdentity = struct {
     pub const k_cchMaxGenericString: i32 = 32;
     pub const k_cchMaxXboxPairwiseID: i32 = 33;
     pub const k_cbMaxGenericBytes: i32 = 32;
-    fn Clear() callconv(.C) anyopaque {
+    pub fn Clear() callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_Clear\n\n", .{  });
         return undefined;
     }
-    fn IsInvalid() callconv(.C) bool {
+    pub fn IsInvalid() callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_IsInvalid\n\n", .{  });
         return undefined;
     }
-    fn SetSteamID(steamID: t.CSteamID) callconv(.C) anyopaque {
+    pub fn SetSteamID(steamID: t.CSteamID) callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_SetSteamID:\n\t- steamID = {any}\n\n", .{ steamID });
         return undefined;
     }
-    fn GetSteamID() callconv(.C) t.CSteamID {
+    pub fn GetSteamID() callconv(.C) t.CSteamID {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_GetSteamID\n\n", .{  });
         return undefined;
     }
-    fn SetSteamID64(steamID: t.uint64) callconv(.C) anyopaque {
+    pub fn SetSteamID64(steamID: t.uint64) callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_SetSteamID64:\n\t- steamID = {any}\n\n", .{ steamID });
         return undefined;
     }
-    fn GetSteamID64() callconv(.C) t.uint64 {
+    pub fn GetSteamID64() callconv(.C) t.uint64 {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_GetSteamID64\n\n", .{  });
         return undefined;
     }
-    fn SetXboxPairwiseID(pszString: [*c]const u8) callconv(.C) bool {
+    pub fn SetXboxPairwiseID(pszString: [*c]const u8) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_SetXboxPairwiseID:\n\t- pszString = {any}\n\n", .{ pszString });
         return undefined;
     }
-    fn GetXboxPairwiseID() callconv(.C) [*c]const u8 {
+    pub fn GetXboxPairwiseID() callconv(.C) [*c]const u8 {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_GetXboxPairwiseID\n\n", .{  });
         return undefined;
     }
-    fn SetPSNID(id: t.uint64) callconv(.C) anyopaque {
+    pub fn SetPSNID(id: t.uint64) callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_SetPSNID:\n\t- id = {any}\n\n", .{ id });
         return undefined;
     }
-    fn GetPSNID() callconv(.C) t.uint64 {
+    pub fn GetPSNID() callconv(.C) t.uint64 {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_GetPSNID\n\n", .{  });
         return undefined;
     }
-    fn SetStadiaID(id: t.uint64) callconv(.C) anyopaque {
+    pub fn SetStadiaID(id: t.uint64) callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_SetStadiaID:\n\t- id = {any}\n\n", .{ id });
         return undefined;
     }
-    fn GetStadiaID() callconv(.C) t.uint64 {
+    pub fn GetStadiaID() callconv(.C) t.uint64 {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_GetStadiaID\n\n", .{  });
         return undefined;
     }
-    fn SetIPAddr(addr: [*c]const t.SteamNetworkingIPAddr) callconv(.C) anyopaque {
+    pub fn SetIPAddr(addr: [*c]const t.SteamNetworkingIPAddr) callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_SetIPAddr:\n\t- addr = {any}\n\n", .{ addr });
         return undefined;
     }
-    fn GetIPAddr() callconv(.C) [*c]const t.SteamNetworkingIPAddr {
+    pub fn GetIPAddr() callconv(.C) [*c]const t.SteamNetworkingIPAddr {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_GetIPAddr\n\n", .{  });
         return undefined;
     }
-    fn SetIPv4Addr(nIPv4: t.uint32, nPort: t.uint16) callconv(.C) anyopaque {
+    pub fn SetIPv4Addr(nIPv4: t.uint32, nPort: t.uint16) callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_SetIPv4Addr:\n\t- nIPv4 = {any}\n\t- nPort = {any}\n\n", .{ nIPv4, nPort });
         return undefined;
     }
-    fn GetIPv4() callconv(.C) t.uint32 {
+    pub fn GetIPv4() callconv(.C) t.uint32 {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_GetIPv4\n\n", .{  });
         return undefined;
     }
-    fn GetFakeIPType() callconv(.C) t.ESteamNetworkingFakeIPType {
+    pub fn GetFakeIPType() callconv(.C) t.ESteamNetworkingFakeIPType {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_GetFakeIPType\n\n", .{  });
         return undefined;
     }
-    fn IsFakeIP() callconv(.C) bool {
+    pub fn IsFakeIP() callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_IsFakeIP\n\n", .{  });
         return undefined;
     }
-    fn SetLocalHost() callconv(.C) anyopaque {
+    pub fn SetLocalHost() callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_SetLocalHost\n\n", .{  });
         return undefined;
     }
-    fn IsLocalHost() callconv(.C) bool {
+    pub fn IsLocalHost() callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_IsLocalHost\n\n", .{  });
         return undefined;
     }
-    fn SetGenericString(pszString: [*c]const u8) callconv(.C) bool {
+    pub fn SetGenericString(pszString: [*c]const u8) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_SetGenericString:\n\t- pszString = {any}\n\n", .{ pszString });
         return undefined;
     }
-    fn GetGenericString() callconv(.C) [*c]const u8 {
+    pub fn GetGenericString() callconv(.C) [*c]const u8 {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_GetGenericString\n\n", .{  });
         return undefined;
     }
-    fn SetGenericBytes(data: [*c]const anyopaque, cbLen: t.uint32) callconv(.C) bool {
+    pub fn SetGenericBytes(data: [*c]const anyopaque, cbLen: t.uint32) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_SetGenericBytes:\n\t- data = {any}\n\t- cbLen = {any}\n\n", .{ data, cbLen });
         return undefined;
     }
-    fn GetGenericBytes(cbLen: [*c]i32) callconv(.C) [*c]const t.uint8 {
+    pub fn GetGenericBytes(cbLen: [*c]i32) callconv(.C) [*c]const t.uint8 {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_GetGenericBytes:\n\t- cbLen = {any}\n\n", .{ cbLen });
         return undefined;
     }
-    fn IsEqualTo(x: [*c]const t.SteamNetworkingIdentity) callconv(.C) bool {
+    pub fn IsEqualTo(x: [*c]const t.SteamNetworkingIdentity) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_IsEqualTo:\n\t- x = {any}\n\n", .{ x });
         return undefined;
     }
-    fn ToString(buf: [*c]u8, cbBuf: t.uint32) callconv(.C) anyopaque {
+    pub fn ToString(buf: [*c]u8, cbBuf: t.uint32) callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_ToString:\n\t- buf = {any}\n\t- cbBuf = {any}\n\n", .{ buf, cbBuf });
         return undefined;
     }
-    fn ParseString(pszStr: [*c]const u8) callconv(.C) bool {
+    pub fn ParseString(pszStr: [*c]const u8) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingIdentity_ParseString:\n\t- pszStr = {any}\n\n", .{ pszStr });
         return undefined;
     }
 };
-pub const SteamNetConnectionInfo_t = struct {
+pub const SteamNetConnectionInfo_t = extern struct {
     m_identityRemote: t.SteamNetworkingIdentity,
     m_nUserData: i32,
     m_hListenSocket: t.HSteamListenSocket,
@@ -383,7 +383,7 @@ pub const SteamNetConnectionInfo_t = struct {
     m_nFlags: i32,
     reserved: [63]t.uint32,
 };
-pub const SteamNetConnectionRealTimeStatus_t = struct {
+pub const SteamNetConnectionRealTimeStatus_t = extern struct {
     m_eState: t.ESteamNetworkingConnectionState,
     m_nPing: i32,
     m_flConnectionQualityLocal: f32,
@@ -399,7 +399,7 @@ pub const SteamNetConnectionRealTimeStatus_t = struct {
     m_usecQueueTime: t.SteamNetworkingMicroseconds,
     reserved: [16]t.uint32,
 };
-pub const SteamNetConnectionRealTimeLaneStatus_t = struct {
+pub const SteamNetConnectionRealTimeLaneStatus_t = extern struct {
     m_cbPendingUnreliable: i32,
     m_cbPendingReliable: i32,
     m_cbSentUnackedReliable: i32,
@@ -407,7 +407,7 @@ pub const SteamNetConnectionRealTimeLaneStatus_t = struct {
     m_usecQueueTime: t.SteamNetworkingMicroseconds,
     reserved: [10]t.uint32,
 };
-pub const SteamNetworkingMessage_t = struct {
+pub const SteamNetworkingMessage_t = extern struct {
     m_pData: [*c]anyopaque,
     m_cbSize: i32,
     m_conn: t.HSteamNetConnection,
@@ -422,56 +422,56 @@ pub const SteamNetworkingMessage_t = struct {
     m_nUserData: i32,
     m_idxLane: t.uint16,
     _pad1__: t.uint16,
-    fn Release() callconv(.C) anyopaque {
+    pub fn Release() callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingMessage_t_Release\n\n", .{  });
         return undefined;
     }
 };
-pub const SteamNetworkPingLocation_t = struct {
+pub const SteamNetworkPingLocation_t = extern struct {
     m_data: [512]t.uint8,
 };
-pub const SteamNetworkingConfigValue_t = struct {
+pub const SteamNetworkingConfigValue_t = extern struct {
     m_eValue: t.ESteamNetworkingConfigValue,
     m_eDataType: t.ESteamNetworkingConfigDataType,
     m_int64: i32,
-    fn SetInt32(eVal: t.ESteamNetworkingConfigValue, data: i32) callconv(.C) anyopaque {
+    pub fn SetInt32(eVal: t.ESteamNetworkingConfigValue, data: i32) callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingConfigValue_t_SetInt32:\n\t- eVal = {any}\n\t- data = {any}\n\n", .{ eVal, data });
         return undefined;
     }
-    fn SetInt64(eVal: t.ESteamNetworkingConfigValue, data: i32) callconv(.C) anyopaque {
+    pub fn SetInt64(eVal: t.ESteamNetworkingConfigValue, data: i32) callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingConfigValue_t_SetInt64:\n\t- eVal = {any}\n\t- data = {any}\n\n", .{ eVal, data });
         return undefined;
     }
-    fn SetFloat(eVal: t.ESteamNetworkingConfigValue, data: f32) callconv(.C) anyopaque {
+    pub fn SetFloat(eVal: t.ESteamNetworkingConfigValue, data: f32) callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingConfigValue_t_SetFloat:\n\t- eVal = {any}\n\t- data = {any}\n\n", .{ eVal, data });
         return undefined;
     }
-    fn SetPtr(eVal: t.ESteamNetworkingConfigValue, data: [*c]anyopaque) callconv(.C) anyopaque {
+    pub fn SetPtr(eVal: t.ESteamNetworkingConfigValue, data: [*c]anyopaque) callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingConfigValue_t_SetPtr:\n\t- eVal = {any}\n\t- data = {any}\n\n", .{ eVal, data });
         return undefined;
     }
-    fn SetString(eVal: t.ESteamNetworkingConfigValue, data: [*c]const u8) callconv(.C) anyopaque {
+    pub fn SetString(eVal: t.ESteamNetworkingConfigValue, data: [*c]const u8) callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_SteamNetworkingConfigValue_t_SetString:\n\t- eVal = {any}\n\t- data = {any}\n\n", .{ eVal, data });
         return undefined;
     }
 };
-pub const SteamDatagramHostedAddress = struct {
+pub const SteamDatagramHostedAddress = extern struct {
     m_cbSize: i32,
     m_data: [128]u8,
-    fn Clear() callconv(.C) anyopaque {
+    pub fn Clear() callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_SteamDatagramHostedAddress_Clear\n\n", .{  });
         return undefined;
     }
-    fn GetPopID() callconv(.C) t.SteamNetworkingPOPID {
+    pub fn GetPopID() callconv(.C) t.SteamNetworkingPOPID {
         p("NOT IMPLEMENTED SteamAPI_SteamDatagramHostedAddress_GetPopID\n\n", .{  });
         return undefined;
     }
-    fn SetDevAddress(nIP: t.uint32, nPort: t.uint16, popid: t.SteamNetworkingPOPID) callconv(.C) anyopaque {
+    pub fn SetDevAddress(nIP: t.uint32, nPort: t.uint16, popid: t.SteamNetworkingPOPID) callconv(.C) anyopaque {
         p("NOT IMPLEMENTED SteamAPI_SteamDatagramHostedAddress_SetDevAddress:\n\t- nIP = {any}\n\t- nPort = {any}\n\t- popid = {any}\n\n", .{ nIP, nPort, popid });
         return undefined;
     }
 };
-pub const SteamDatagramGameCoordinatorServerLogin = struct {
+pub const SteamDatagramGameCoordinatorServerLogin = extern struct {
     m_identity: t.SteamNetworkingIdentity,
     m_routing: t.SteamDatagramHostedAddress,
     m_nAppID: t.AppId_t,

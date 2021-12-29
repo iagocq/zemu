@@ -143,12 +143,12 @@ const Generator = struct {
         var out_dir = try cwd.openDir(self.out_dir_path, .{});
         defer out_dir.close();
 
-        // self.generateInterfaces(out_dir, "interfaces.zig");
         try self.generateTypedefs(out_dir, "typedefs.zig");
         try self.generateEnums(out_dir, "enums.zig");
         try self.generateConsts(out_dir, "consts.zig");
         try self.generateCallbackStructs(out_dir, "callback_structs.zig");
         try self.generateStructs(out_dir, "structs.zig");
+        try self.generateInterfaces(out_dir, "interfaces.zig");
     }
 
     fn generateTypedefs(self: *Self, dir: std.fs.Dir, file_name: []const u8) !void {
@@ -261,7 +261,7 @@ const Generator = struct {
     }
 
     fn writeStruct(writer: anytype, struct_def: Struct, l: usize) !void {
-        try format(writer, "pub const {s} = struct {{\n", .{ struct_def.@"struct" }, l);
+        try format(writer, "pub const {s} = extern struct {{\n", .{ struct_def.@"struct" }, l);
         for (struct_def.fields) |field| {
             try writeField(writer, field, l+1);
         }
@@ -282,7 +282,7 @@ const Generator = struct {
             else if (eql(u8, "operator==", m)) "IsEqualTo"
             else m
         ;
-        try format(writer, "fn {s}(", .{ name }, l);
+        try format(writer, "pub fn {s}(", .{ name }, l);
         for (method.params) |param, i| {
             try writeParam(writer, param, l+1);
             if (i < method.params.len-1) {
@@ -318,6 +318,50 @@ const Generator = struct {
         }
         try format(writer, " }});\n", .{}, 0);
         try format(writer, "return undefined;\n", .{}, l);
+    }
+
+    fn generateInterfaces(self: *Self, dir: std.fs.Dir, file_name: []const u8) !void {
+        var file = try createFileWithHeader(dir, file_name);
+        defer file.close();
+
+        var writer = file.writer();
+
+        try format(writer, "const p = @import(\"std\").debug.print;\n", .{}, 0);
+        for (self.interface.interfaces) |interface| {
+            try writeInterface(writer, interface, 0);
+        }
+    }
+
+    fn writeInterface(writer: anytype, interface: Interface, l: usize) !void {
+        try format(writer, "pub const {s} = struct {{\n", .{ interface.classname }, l);
+        for (interface.fields) |field| {
+            try writeField(writer, field, l+1);
+        }
+
+        if (interface.version_string) |version| {
+            try format(writer, "pub const version = \"{s}\";\n", .{ version }, l+1);
+        }
+
+        for (interface.enums orelse &[_]Enum{}) |enum_def| {
+            try writeEnum(writer, enum_def, l+1);
+        }
+        for (interface.methods) |method| {
+            try writeMethod(writer, method, l+1);
+        }
+        try format(writer, "}};\n", .{}, l);
+
+        for (interface.accessors orelse &[_]Accessor{}) |accessor| {
+            var returntype: [128]u8 = undefined;
+            std.mem.copy(u8, returntype[0..], interface.classname);
+            std.mem.copy(u8, returntype[interface.classname.len..], " *");
+            var method = Method{
+                .methodname = accessor.name_flat,
+                .methodname_flat = accessor.name_flat,
+                .params = &[_]Param{},
+                .returntype = returntype[0..interface.classname.len+2]
+            };
+            try writeMethod(writer, method, l);
+        }
     }
 
     fn createFileWithHeader(dir: std.fs.Dir, file_name: []const u8) !std.fs.File {
