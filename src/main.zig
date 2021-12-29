@@ -1,9 +1,7 @@
-const std = @import("../../zig/lib/std/std.zig");
+const std = @import("std");
 const builtin = @import("builtin");
-const generator = @import("./binding/generator.zig");
 
 comptime {
-    _ = generator;
     // const a = @Type(.{
     //     .Fn = .{
     //         .calling_convention = .C,

@@ -6,11 +6,18 @@ pub fn build(b: *std.build.Builder) void {
     const mode = b.standardReleaseOptions();
     const target = b.standardTargetOptions(.{});
 
+    const generate_step = b.step("generate", "Generate steam_api bindings");
+    const generator = b.addExecutable("generator", "src/generator/main.zig");
+    var run = generator.run();
+    run.addArgs(&.{ "src/generator/steam_api.json", "src/generated" });
+    generate_step.dependOn(&run.step);
+
     const lib = b.addSharedLibrary("zemu", "src/main.zig", .unversioned);
     lib.linkLibC();
     lib.setBuildMode(mode);
     lib.setTarget(target);
     lib.install();
+    lib.step.dependOn(generate_step);
 
     const main_tests = b.addTest("src/main.zig");
     main_tests.setBuildMode(mode);
