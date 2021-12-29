@@ -104,12 +104,6 @@ fn last(a: []const u8) u8 {
     return a[a.len-1];
 }
 
-fn concatAndFree(allocator: std.mem.Allocator, slices: []const []const u8, free: []const u8) ![]u8 {
-    var result = std.mem.concat(allocator, u8, slices) catch unreachable;
-    allocator.free(free);
-    return result;
-}
-
 const Generator = struct {
     interface: FlatInterface,
     out_dir_path: []const u8,
@@ -153,8 +147,22 @@ const Generator = struct {
         // self.generateEnums(out_dir, "enums.zig");
         // self.generateInterfaces(out_dir, "interfaces.zig");
         // self.generateStructs(out_dir, "structs.zig");
-        // self.generateTypedefs(out_dir, "typedefs.zig");
         try self.generateTypedefs(out_dir, "typedefs.zig");
+    }
+
+    fn generateTypedefs(self: *Self, dir: std.fs.Dir, file_name: []const u8) !void {
+        var file = try createFile(dir, file_name);
+        var writer = file.writer();
+        file.write(common_header);
+        for (self.interface.typedefs) |typedef| {
+            _ = try file.write("const ");
+            _ = try file.write(typedef.typedef);
+            _ = try file.write(" = ");
+            writeType(writer, typedef.@"type") catch |err| {
+                std.log.err("Failed to write type {s}: {any}", .{ typedef.@"type", err });
+            };
+            _ = try file.write(";\n");
+        }
     }
 
     fn createFile(dir: std.fs.Dir, file_name: []const u8) !std.fs.File {
@@ -164,12 +172,17 @@ const Generator = struct {
         };
     }
 
-    pub fn parsePointer(self: *Self, type_name: *[]const u8) []const u8 {
+    const WriteError = error {
+        InvalidArray,
+        InvalidFunction,
+    } || std.os.WriteError;
+
+    fn writePointer(writer: anytype, type_name: *[]const u8) WriteError!void {
+        type_name.* = std.mem.trim(u8, type_name.*, " ");
         var t = type_name.*;
-        var result = self.allocator.alloc(u8, 0) catch unreachable;
 
         if (t.len == 0 or !(last(t) == '*' or last(t) == '&')) {
-            return result;
+            return;
         }
 
         const start_const = pEql(t, "const ");
@@ -180,7 +193,6 @@ const Generator = struct {
             t = t[c_len+1..];
             type_name.* = type_name.*[c_len+1..];
         }
-
 
         {
             // skip to after type name
@@ -196,97 +208,74 @@ const Generator = struct {
             if (last(t) == '*' or last(t) == '&') {
                 // remove last * or &
                 t = t[0..t.len-1];
-
-                result = concatAndFree(self.allocator, &.{ result, "[*c]" }, result) catch unreachable;
+                _ = try writer.write("[*c]");
             } else if (last(t) == ' ') {
                 t = t[0..t.len-1];
             } else if (pEql(t[t.len-c_len..], "const")) {
                 t = t[0..t.len-c_len];
-                result = concatAndFree(self.allocator, &.{ result, "const " }, result) catch unreachable;
+                _ = try writer.write("const ");
             }
         }
 
         if (start_const) {
-            result = concatAndFree(self.allocator, &.{ result, "const " }, result) catch unreachable;
+            _ = try writer.write("const ");
         }
 
         if (last(type_name.*) == ' ') {
             type_name.* = type_name.*[0..type_name.*.len-1];
         }
-
-        return result;
     }
 
-    pub fn parseArray(self: *Self, type_name: *[]const u8) []const u8 {
+    fn writeArray(writer: anytype, type_name: *[]const u8) WriteError!void {
+        type_name.* = std.mem.trim(u8, type_name.*, " ");
         var t = type_name.*;
-        var result = self.allocator.alloc(u8, 0) catch unreachable;
 
         if (t.len == 0 or last(t) != ']') {
-            return result;
+            return;
         }
 
-        const start_idx = std.mem.indexOfScalar(u8, t, '[') orelse return result;
+        const start_idx = std.mem.indexOfScalar(u8, t, '[') orelse return error.InvalidArray;
         t = t[start_idx..t.len];
         type_name.* = type_name.*[0..start_idx];
 
-        return std.mem.concat(self.allocator, u8, &.{ t }) catch unreachable;
+        _ = try writer.write(t);
     }
 
-    pub fn transformFn(self: *Self, type_name: []const u8) []const u8 {
-        var t = type_name;
-
-        var result = self.allocator.alloc(u8, 0) catch unreachable;
+    fn writeFn(writer: anytype, type_name: *[]const u8) WriteError!void {
+        type_name.* = std.mem.trim(u8, type_name.*, " ");
+        var t = type_name.*;
 
         if (!pEql(t, "void (*)(") or last(t) != ')') {
-            std.log.err("Invalid function type definition {s}", .{ type_name });
-            return result;
+            std.log.err("Invalid function type definition: {s}", .{ type_name });
+            return error.InvalidFunction;
         }
 
         t = t["void (*)(".len..t.len-1];
 
-        result = concatAndFree(self.allocator, &.{ result, "fn(" }, result) catch unreachable;
+        _ = try writer.write("fn(");
 
         var args = std.mem.count(u8, t, ",") + 1;
         while (args > 0) : (args -= 1) {
             var end_idx = std.mem.indexOfScalar(u8, t, ',') orelse t.len;
-            var arg_type = self.transformType(t[0..end_idx]);
-            defer self.allocator.free(arg_type);
+            try writeType(writer, t[0..end_idx]);
 
             end_idx = if (args != 1) end_idx + 1 else end_idx;
             t = t[end_idx..];
 
-            var comma = if (args != 1) ", " else "";
-
-            result = concatAndFree(self.allocator, &.{ result, arg_type, comma }, result) catch unreachable;
+            const comma = if (args != 1) ", " else "";
+            _ = try writer.write(comma);
         }
 
-        result = concatAndFree(self.allocator, &.{ result, ") callconv(.C) void" }, result) catch unreachable;
-        return result;
+        _ = try writer.write(") callconv(.C) void");
     }
 
-    pub fn transformType(self: *Self, type_name: []const u8) []const u8 {
+    fn writeType(writer: anytype, type_name: []const u8) WriteError!void {
         var t = type_name;
+        t = std.mem.trim(u8, t, " ");
 
-        while (t.len > 0 and t[0] == ' ') {
-            t = t[1..];
-        }
+        try writeArray(writer, &t);
+        try writePointer(writer, &t);
 
-        while (t.len > 0 and t[t.len-1] == ' ') {
-            t = t[0..t.len-1];
-        }
-
-        const array = self.parseArray(&t);
-        const ptr = self.parsePointer(&t);
-        defer self.allocator.free(ptr);
-        defer self.allocator.free(array);
-
-        const ref = last(t) == '&';
-        if (ref) {
-            // remove last & char and space
-            t = t[0..t.len-2];
-        }
-
-        var free_type_name = false;
         const zig_type_name = if (false) ""
             else if (pEql(t, "signed char")) "i8"
             else if (pEql(t, "short")) "i16"
@@ -297,30 +286,20 @@ const Generator = struct {
             else if (pEql(t, "unsigned short")) "u16"
             else if (pEql(t, "unsigned int")) "u32"
             else if (pEql(t, "unsigned long long")) "u64"
+            else if (pEql(t, "float")) "f32"
+            else if (pEql(t, "double")) "f64"
+            else if (pEql(t, "bool")) "bool"
             else if (pEql(t, "void (*)")) blk: {
-                free_type_name = true;
-                break :blk self.transformFn(t);
+                try writeFn(writer, &t);
+                break :blk "";
             } else if (pEql(t, "void")) "anyopaque"
             else blk: {
-                free_type_name = true;
-                break :blk std.mem.concat(self.allocator, u8, &.{ "t.", t }) catch unreachable;
+                _ = try writer.write("t.");
+                _ = try writer.write(t);
+                break :blk "";
             };
-        defer if (free_type_name) self.allocator.free(zig_type_name);
 
-        return std.mem.concat(self.allocator, u8, &.{ array, ptr, zig_type_name }) catch unreachable;
-    }
-
-    fn generateTypedefs(self: *Self, dir: std.fs.Dir, file_name: []const u8) !void {
-        var file = try Self.createFile(dir, file_name);
-        for (self.interface.typedefs) |typedef| {
-            _ = try file.write("const ");
-            _ = try file.write(typedef.typedef);
-            _ = try file.write(" = ");
-            var transformed = self.transformType(typedef.@"type");
-            defer self.allocator.free(transformed);
-            _ = try file.write(transformed);
-            _ = try file.write(";\n");
-        }
+        _ = try writer.write(zig_type_name);
     }
 };
 
