@@ -143,12 +143,12 @@ const Generator = struct {
         var out_dir = try cwd.openDir(self.out_dir_path, .{});
         defer out_dir.close();
 
-        // self.generateCallbackStructs(out_dir, "callback_structs.zig");
         // self.generateInterfaces(out_dir, "interfaces.zig");
         // self.generateStructs(out_dir, "structs.zig");
         try self.generateTypedefs(out_dir, "typedefs.zig");
         try self.generateEnums(out_dir, "enums.zig");
         try self.generateConsts(out_dir, "consts.zig");
+        try self.generateCallbackStructs(out_dir, "callback_structs.zig");
     }
 
     fn generateTypedefs(self: *Self, dir: std.fs.Dir, file_name: []const u8) !void {
@@ -162,7 +162,7 @@ const Generator = struct {
     }
 
     fn writeTypedef(writer: anytype, typedef: Typedef, l: usize) !void {
-        try format(writer, "const {s} = ", .{ typedef.typedef }, l);
+        try format(writer, "pub const {s} = ", .{ typedef.typedef }, l);
         writeType(writer, typedef.@"type") catch |err| {
             std.log.err("Failed to write type {s}: {any}", .{ typedef.@"type", err });
         };
@@ -180,11 +180,11 @@ const Generator = struct {
     }
 
     fn writeEnum(writer: anytype, enum_def: Enum, l: usize) !void {
-        try format(writer, "const {s} = enum(c_int) {{\n", .{ enum_def.enumname }, l);
+        try format(writer, "pub const {s} = enum(c_int) {{\n", .{ enum_def.enumname }, l);
         for (enum_def.values) |value| {
             try format(writer, "{s} = {s},\n", .{ value.name, value.value }, l + 1);
         }
-        _ = try writer.write("};\n");
+        try format(writer, "}};\n", .{}, l);
     }
 
     fn generateConsts(self: *Self, dir: std.fs.Dir, file_name: []const u8) !void {
@@ -198,7 +198,7 @@ const Generator = struct {
     }
 
     fn writeConst(writer: anytype, const_def: Const, l: usize) !void {
-        try format(writer, "const {s}: ", .{ const_def.constname }, l);
+        try format(writer, "pub const {s}: ", .{ const_def.constname }, l);
         try writeType(writer, const_def.consttype);
         const v = const_def.constval;
         const n = const_def.constname;
@@ -213,6 +213,39 @@ const Generator = struct {
             else v
         ;
         try format(writer, " = {s};\n", .{ constval }, 0);
+    }
+
+    fn generateCallbackStructs(self: *Self, dir: std.fs.Dir, file_name: []const u8) !void {
+        var file = try createFileWithHeader(dir, file_name);
+        defer file.close();
+
+        var writer = file.writer();
+        for (self.interface.callback_structs) |callback_struct| {
+            try writeCallbackStruct(writer, callback_struct, 0);
+        }
+    }
+
+    fn writeCallbackStruct(writer: anytype, callback_struct: CallbackStruct, l: usize) !void {
+        try format(writer, "pub const {s} = extern struct {{\n", .{ callback_struct.@"struct" }, l);
+        try format(writer, "pub const callback_id = {d};\n", .{ callback_struct.callback_id }, l+1);
+        for (callback_struct.consts orelse &[_]Const{}) |const_def| {
+            try writeConst(writer, const_def, l+1);
+        }
+        for (callback_struct.enums orelse &[_]Enum{}) |enum_def| {
+            try writeEnum(writer, enum_def, l+1);
+        }
+        for (callback_struct.fields) |field| {
+            try writeField(writer, field, l+1);
+        }
+        try format(writer, "}};\n", .{}, l);
+    }
+
+    fn writeField(writer: anytype, field: Field, l: usize) !void {
+        // const modifier = if (field.private orelse false) "" else "pub ";
+        const modifier = "";
+        try format(writer, "{s}{s}: ", .{ modifier, field.fieldname }, l);
+        try writeType(writer, field.fieldtype);
+        try format(writer, ",\n", .{}, 0);
     }
 
     fn createFileWithHeader(dir: std.fs.Dir, file_name: []const u8) !std.fs.File {
@@ -356,7 +389,15 @@ const Generator = struct {
                 try writeFn(writer, &t);
                 break :blk "";
             } else if (pEql(t, "void")) "anyopaque"
-            else blk: {
+            else if (std.mem.indexOf(u8, t, "::")) |_| blk: {
+                _ = try writer.write("t.");
+                while (std.mem.indexOf(u8, t, "::")) |idx| {
+                    _ = try writer.write(t[0..idx]);
+                    _ = try writer.write(".");
+                    t = t[idx+2..];
+                }
+                break :blk t;
+            } else blk: {
                 _ = try writer.write("t.");
                 _ = try writer.write(t);
                 break :blk "";
@@ -379,7 +420,7 @@ pub fn main() void {
 
     var cwd = std.fs.cwd();
 
-    var should_generate = false;
+    var should_generate = true;
     if (cwd.openFile(in_file_path, .{})) |in_file| {
         var callback_path = std.fs.path.join(allocator, &.{ out_dir_path, "callback_structs.zig" }) catch unreachable;
         defer allocator.free(callback_path);

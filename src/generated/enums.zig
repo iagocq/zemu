@@ -1,9 +1,9 @@
 const t = @import("../types.zig");
-const ESteamIPType = enum(c_int) {
+pub const ESteamIPType = enum(c_int) {
     k_ESteamIPTypeIPv4 = 0,
     k_ESteamIPTypeIPv6 = 1,
 };
-const EUniverse = enum(c_int) {
+pub const EUniverse = enum(c_int) {
     k_EUniverseInvalid = 0,
     k_EUniversePublic = 1,
     k_EUniverseBeta = 2,
@@ -11,7 +11,7 @@ const EUniverse = enum(c_int) {
     k_EUniverseDev = 4,
     k_EUniverseMax = 5,
 };
-const EResult = enum(c_int) {
+pub const EResult = enum(c_int) {
     k_EResultNone = 0,
     k_EResultOK = 1,
     k_EResultFail = 2,
@@ -136,7 +136,7 @@ const EResult = enum(c_int) {
     k_EResultParseFailure = 122,
     k_EResultNoVerifiedPhone = 123,
 };
-const EVoiceResult = enum(c_int) {
+pub const EVoiceResult = enum(c_int) {
     k_EVoiceResultOK = 0,
     k_EVoiceResultNotInitialized = 1,
     k_EVoiceResultNotRecording = 2,
@@ -148,7 +148,7 @@ const EVoiceResult = enum(c_int) {
     k_EVoiceResultReceiverOutOfDate = 8,
     k_EVoiceResultReceiverDidNotAnswer = 9,
 };
-const EDenyReason = enum(c_int) {
+pub const EDenyReason = enum(c_int) {
     k_EDenyInvalid = 0,
     k_EDenyInvalidVersion = 1,
     k_EDenyGeneric = 2,
@@ -166,7 +166,7 @@ const EDenyReason = enum(c_int) {
     k_EDenySteamValidationStalled = 14,
     k_EDenySteamOwnerLeftGuestUser = 15,
 };
-const EBeginAuthSessionResult = enum(c_int) {
+pub const EBeginAuthSessionResult = enum(c_int) {
     k_EBeginAuthSessionResultOK = 0,
     k_EBeginAuthSessionResultInvalidTicket = 1,
     k_EBeginAuthSessionResultDuplicateRequest = 2,
@@ -174,7 +174,7 @@ const EBeginAuthSessionResult = enum(c_int) {
     k_EBeginAuthSessionResultGameMismatch = 4,
     k_EBeginAuthSessionResultExpiredTicket = 5,
 };
-const EAuthSessionResponse = enum(c_int) {
+pub const EAuthSessionResponse = enum(c_int) {
     k_EAuthSessionResponseOK = 0,
     k_EAuthSessionResponseUserNotConnectedToSteam = 1,
     k_EAuthSessionResponseNoLicenseOrExpired = 2,
@@ -186,12 +186,12 @@ const EAuthSessionResponse = enum(c_int) {
     k_EAuthSessionResponseAuthTicketInvalid = 8,
     k_EAuthSessionResponsePublisherIssuedBan = 9,
 };
-const EUserHasLicenseForAppResult = enum(c_int) {
+pub const EUserHasLicenseForAppResult = enum(c_int) {
     k_EUserHasLicenseResultHasLicense = 0,
     k_EUserHasLicenseResultDoesNotHaveLicense = 1,
     k_EUserHasLicenseResultNoAuth = 2,
 };
-const EAccountType = enum(c_int) {
+pub const EAccountType = enum(c_int) {
     k_EAccountTypeInvalid = 0,
     k_EAccountTypeIndividual = 1,
     k_EAccountTypeMultiseat = 2,
@@ -205,7 +205,7 @@ const EAccountType = enum(c_int) {
     k_EAccountTypeAnonUser = 10,
     k_EAccountTypeMax = 11,
 };
-const EChatEntryType = enum(c_int) {
+pub const EChatEntryType = enum(c_int) {
     k_EChatEntryTypeInvalid = 0,
     k_EChatEntryTypeChatMsg = 1,
     k_EChatEntryTypeTyping = 2,
@@ -219,7 +219,7 @@ const EChatEntryType = enum(c_int) {
     k_EChatEntryTypeHistoricalChat = 11,
     k_EChatEntryTypeLinkBlocked = 14,
 };
-const EChatRoomEnterResponse = enum(c_int) {
+pub const EChatRoomEnterResponse = enum(c_int) {
     k_EChatRoomEnterResponseSuccess = 1,
     k_EChatRoomEnterResponseDoesntExist = 2,
     k_EChatRoomEnterResponseNotAllowed = 3,
@@ -233,19 +233,19 @@ const EChatRoomEnterResponse = enum(c_int) {
     k_EChatRoomEnterResponseYouBlockedMember = 11,
     k_EChatRoomEnterResponseRatelimitExceeded = 15,
 };
-const EChatSteamIDInstanceFlags = enum(c_int) {
+pub const EChatSteamIDInstanceFlags = enum(c_int) {
     k_EChatAccountInstanceMask = 4095,
     k_EChatInstanceFlagClan = 524288,
     k_EChatInstanceFlagLobby = 262144,
     k_EChatInstanceFlagMMSLobby = 131072,
 };
-const ENotificationPosition = enum(c_int) {
+pub const ENotificationPosition = enum(c_int) {
     k_EPositionTopLeft = 0,
     k_EPositionTopRight = 1,
     k_EPositionBottomLeft = 2,
     k_EPositionBottomRight = 3,
 };
-const EBroadcastUploadResult = enum(c_int) {
+pub const EBroadcastUploadResult = enum(c_int) {
     k_EBroadcastUploadResultNone = 0,
     k_EBroadcastUploadResultOK = 1,
     k_EBroadcastUploadResultInitFailed = 2,
@@ -271,7 +271,7 @@ const EBroadcastUploadResult = enum(c_int) {
     k_EBroadcastUploadResultVideoInitFailed = 22,
     k_EBroadcastUploadResultAudioInitFailed = 23,
 };
-const EMarketNotAllowedReasonFlags = enum(c_int) {
+pub const EMarketNotAllowedReasonFlags = enum(c_int) {
     k_EMarketNotAllowedReason_None = 0,
     k_EMarketNotAllowedReason_TemporaryFailure = 1,
     k_EMarketNotAllowedReason_AccountDisabled = 2,
@@ -290,7 +290,7 @@ const EMarketNotAllowedReasonFlags = enum(c_int) {
     k_EMarketNotAllowedReason_NoRecentPurchases = 16384,
     k_EMarketNotAllowedReason_AcceptedWalletGift = 32768,
 };
-const EDurationControlProgress = enum(c_int) {
+pub const EDurationControlProgress = enum(c_int) {
     k_EDurationControlProgress_Full = 0,
     k_EDurationControlProgress_Half = 1,
     k_EDurationControlProgress_None = 2,
@@ -298,7 +298,7 @@ const EDurationControlProgress = enum(c_int) {
     k_EDurationControl_ExitSoon_5h = 4,
     k_EDurationControl_ExitSoon_Night = 5,
 };
-const EDurationControlNotification = enum(c_int) {
+pub const EDurationControlNotification = enum(c_int) {
     k_EDurationControlNotification_None = 0,
     k_EDurationControlNotification_1Hour = 1,
     k_EDurationControlNotification_3Hours = 2,
@@ -308,13 +308,13 @@ const EDurationControlNotification = enum(c_int) {
     k_EDurationControlNotification_ExitSoon_5h = 6,
     k_EDurationControlNotification_ExitSoon_Night = 7,
 };
-const EDurationControlOnlineState = enum(c_int) {
+pub const EDurationControlOnlineState = enum(c_int) {
     k_EDurationControlOnlineState_Invalid = 0,
     k_EDurationControlOnlineState_Offline = 1,
     k_EDurationControlOnlineState_Online = 2,
     k_EDurationControlOnlineState_OnlineHighPri = 3,
 };
-const EGameSearchErrorCode_t = enum(c_int) {
+pub const EGameSearchErrorCode_t = enum(c_int) {
     k_EGameSearchErrorCode_OK = 1,
     k_EGameSearchErrorCode_Failed_Search_Already_In_Progress = 2,
     k_EGameSearchErrorCode_Failed_No_Search_In_Progress = 3,
@@ -325,24 +325,24 @@ const EGameSearchErrorCode_t = enum(c_int) {
     k_EGameSearchErrorCode_Failed_NotAuthorized = 8,
     k_EGameSearchErrorCode_Failed_Unknown_Error = 9,
 };
-const EPlayerResult_t = enum(c_int) {
+pub const EPlayerResult_t = enum(c_int) {
     k_EPlayerResultFailedToConnect = 1,
     k_EPlayerResultAbandoned = 2,
     k_EPlayerResultKicked = 3,
     k_EPlayerResultIncomplete = 4,
     k_EPlayerResultCompleted = 5,
 };
-const ESteamIPv6ConnectivityProtocol = enum(c_int) {
+pub const ESteamIPv6ConnectivityProtocol = enum(c_int) {
     k_ESteamIPv6ConnectivityProtocol_Invalid = 0,
     k_ESteamIPv6ConnectivityProtocol_HTTP = 1,
     k_ESteamIPv6ConnectivityProtocol_UDP = 2,
 };
-const ESteamIPv6ConnectivityState = enum(c_int) {
+pub const ESteamIPv6ConnectivityState = enum(c_int) {
     k_ESteamIPv6ConnectivityState_Unknown = 0,
     k_ESteamIPv6ConnectivityState_Good = 1,
     k_ESteamIPv6ConnectivityState_Bad = 2,
 };
-const EFriendRelationship = enum(c_int) {
+pub const EFriendRelationship = enum(c_int) {
     k_EFriendRelationshipNone = 0,
     k_EFriendRelationshipBlocked = 1,
     k_EFriendRelationshipRequestRecipient = 2,
@@ -353,7 +353,7 @@ const EFriendRelationship = enum(c_int) {
     k_EFriendRelationshipSuggested_DEPRECATED = 7,
     k_EFriendRelationshipMax = 8,
 };
-const EPersonaState = enum(c_int) {
+pub const EPersonaState = enum(c_int) {
     k_EPersonaStateOffline = 0,
     k_EPersonaStateOnline = 1,
     k_EPersonaStateBusy = 2,
@@ -364,7 +364,7 @@ const EPersonaState = enum(c_int) {
     k_EPersonaStateInvisible = 7,
     k_EPersonaStateMax = 8,
 };
-const EFriendFlags = enum(c_int) {
+pub const EFriendFlags = enum(c_int) {
     k_EFriendFlagNone = 0,
     k_EFriendFlagBlocked = 1,
     k_EFriendFlagFriendshipRequested = 2,
@@ -378,7 +378,7 @@ const EFriendFlags = enum(c_int) {
     k_EFriendFlagChatMember = 4096,
     k_EFriendFlagAll = 65535,
 };
-const EUserRestriction = enum(c_int) {
+pub const EUserRestriction = enum(c_int) {
     k_nUserRestrictionNone = 0,
     k_nUserRestrictionUnknown = 1,
     k_nUserRestrictionAnyChat = 2,
@@ -388,16 +388,16 @@ const EUserRestriction = enum(c_int) {
     k_nUserRestrictionGameInvites = 32,
     k_nUserRestrictionTrading = 64,
 };
-const EOverlayToStoreFlag = enum(c_int) {
+pub const EOverlayToStoreFlag = enum(c_int) {
     k_EOverlayToStoreFlag_None = 0,
     k_EOverlayToStoreFlag_AddToCart = 1,
     k_EOverlayToStoreFlag_AddToCartAndShow = 2,
 };
-const EActivateGameOverlayToWebPageMode = enum(c_int) {
+pub const EActivateGameOverlayToWebPageMode = enum(c_int) {
     k_EActivateGameOverlayToWebPageMode_Default = 0,
     k_EActivateGameOverlayToWebPageMode_Modal = 1,
 };
-const EPersonaChange = enum(c_int) {
+pub const EPersonaChange = enum(c_int) {
     k_EPersonaChangeName = 1,
     k_EPersonaChangeStatus = 2,
     k_EPersonaChangeComeOnline = 4,
@@ -414,53 +414,53 @@ const EPersonaChange = enum(c_int) {
     k_EPersonaChangeSteamLevel = 8192,
     k_EPersonaChangeRichPresence = 16384,
 };
-const ESteamAPICallFailure = enum(c_int) {
+pub const ESteamAPICallFailure = enum(c_int) {
     k_ESteamAPICallFailureNone = -1,
     k_ESteamAPICallFailureSteamGone = 0,
     k_ESteamAPICallFailureNetworkFailure = 1,
     k_ESteamAPICallFailureInvalidHandle = 2,
     k_ESteamAPICallFailureMismatchedCallback = 3,
 };
-const EGamepadTextInputMode = enum(c_int) {
+pub const EGamepadTextInputMode = enum(c_int) {
     k_EGamepadTextInputModeNormal = 0,
     k_EGamepadTextInputModePassword = 1,
 };
-const EGamepadTextInputLineMode = enum(c_int) {
+pub const EGamepadTextInputLineMode = enum(c_int) {
     k_EGamepadTextInputLineModeSingleLine = 0,
     k_EGamepadTextInputLineModeMultipleLines = 1,
 };
-const EFloatingGamepadTextInputMode = enum(c_int) {
+pub const EFloatingGamepadTextInputMode = enum(c_int) {
     k_EFloatingGamepadTextInputModeModeSingleLine = 0,
     k_EFloatingGamepadTextInputModeModeMultipleLines = 1,
     k_EFloatingGamepadTextInputModeModeEmail = 2,
     k_EFloatingGamepadTextInputModeModeNumeric = 3,
 };
-const ETextFilteringContext = enum(c_int) {
+pub const ETextFilteringContext = enum(c_int) {
     k_ETextFilteringContextUnknown = 0,
     k_ETextFilteringContextGameContent = 1,
     k_ETextFilteringContextChat = 2,
     k_ETextFilteringContextName = 3,
 };
-const ECheckFileSignature = enum(c_int) {
+pub const ECheckFileSignature = enum(c_int) {
     k_ECheckFileSignatureInvalidSignature = 0,
     k_ECheckFileSignatureValidSignature = 1,
     k_ECheckFileSignatureFileNotFound = 2,
     k_ECheckFileSignatureNoSignaturesFoundForThisApp = 3,
     k_ECheckFileSignatureNoSignaturesFoundForThisFile = 4,
 };
-const EMatchMakingServerResponse = enum(c_int) {
+pub const EMatchMakingServerResponse = enum(c_int) {
     eServerResponded = 0,
     eServerFailedToRespond = 1,
     eNoServersListedOnMasterServer = 2,
 };
-const ELobbyType = enum(c_int) {
+pub const ELobbyType = enum(c_int) {
     k_ELobbyTypePrivate = 0,
     k_ELobbyTypeFriendsOnly = 1,
     k_ELobbyTypePublic = 2,
     k_ELobbyTypeInvisible = 3,
     k_ELobbyTypePrivateUnique = 4,
 };
-const ELobbyComparison = enum(c_int) {
+pub const ELobbyComparison = enum(c_int) {
     k_ELobbyComparisonEqualToOrLessThan = -2,
     k_ELobbyComparisonLessThan = -1,
     k_ELobbyComparisonEqual = 0,
@@ -468,32 +468,32 @@ const ELobbyComparison = enum(c_int) {
     k_ELobbyComparisonEqualToOrGreaterThan = 2,
     k_ELobbyComparisonNotEqual = 3,
 };
-const ELobbyDistanceFilter = enum(c_int) {
+pub const ELobbyDistanceFilter = enum(c_int) {
     k_ELobbyDistanceFilterClose = 0,
     k_ELobbyDistanceFilterDefault = 1,
     k_ELobbyDistanceFilterFar = 2,
     k_ELobbyDistanceFilterWorldwide = 3,
 };
-const EChatMemberStateChange = enum(c_int) {
+pub const EChatMemberStateChange = enum(c_int) {
     k_EChatMemberStateChangeEntered = 1,
     k_EChatMemberStateChangeLeft = 2,
     k_EChatMemberStateChangeDisconnected = 4,
     k_EChatMemberStateChangeKicked = 8,
     k_EChatMemberStateChangeBanned = 16,
 };
-const ESteamPartyBeaconLocationType = enum(c_int) {
+pub const ESteamPartyBeaconLocationType = enum(c_int) {
     k_ESteamPartyBeaconLocationType_Invalid = 0,
     k_ESteamPartyBeaconLocationType_ChatGroup = 1,
     k_ESteamPartyBeaconLocationType_Max = 2,
 };
-const ESteamPartyBeaconLocationData = enum(c_int) {
+pub const ESteamPartyBeaconLocationData = enum(c_int) {
     k_ESteamPartyBeaconLocationDataInvalid = 0,
     k_ESteamPartyBeaconLocationDataName = 1,
     k_ESteamPartyBeaconLocationDataIconURLSmall = 2,
     k_ESteamPartyBeaconLocationDataIconURLMedium = 3,
     k_ESteamPartyBeaconLocationDataIconURLLarge = 4,
 };
-const ERemoteStoragePlatform = enum(c_int) {
+pub const ERemoteStoragePlatform = enum(c_int) {
     k_ERemoteStoragePlatformNone = 0,
     k_ERemoteStoragePlatformWindows = 1,
     k_ERemoteStoragePlatformOSX = 2,
@@ -504,13 +504,13 @@ const ERemoteStoragePlatform = enum(c_int) {
     k_ERemoteStoragePlatformIOS = 64,
     k_ERemoteStoragePlatformAll = -1,
 };
-const ERemoteStoragePublishedFileVisibility = enum(c_int) {
+pub const ERemoteStoragePublishedFileVisibility = enum(c_int) {
     k_ERemoteStoragePublishedFileVisibilityPublic = 0,
     k_ERemoteStoragePublishedFileVisibilityFriendsOnly = 1,
     k_ERemoteStoragePublishedFileVisibilityPrivate = 2,
     k_ERemoteStoragePublishedFileVisibilityUnlisted = 3,
 };
-const EWorkshopFileType = enum(c_int) {
+pub const EWorkshopFileType = enum(c_int) {
     k_EWorkshopFileTypeFirst = 0,
     k_EWorkshopFileTypeCommunity = 0,
     k_EWorkshopFileTypeMicrotransaction = 1,
@@ -530,17 +530,17 @@ const EWorkshopFileType = enum(c_int) {
     k_EWorkshopFileTypeGameManagedItem = 15,
     k_EWorkshopFileTypeMax = 16,
 };
-const EWorkshopVote = enum(c_int) {
+pub const EWorkshopVote = enum(c_int) {
     k_EWorkshopVoteUnvoted = 0,
     k_EWorkshopVoteFor = 1,
     k_EWorkshopVoteAgainst = 2,
     k_EWorkshopVoteLater = 3,
 };
-const EWorkshopFileAction = enum(c_int) {
+pub const EWorkshopFileAction = enum(c_int) {
     k_EWorkshopFileActionPlayed = 0,
     k_EWorkshopFileActionCompleted = 1,
 };
-const EWorkshopEnumerationType = enum(c_int) {
+pub const EWorkshopEnumerationType = enum(c_int) {
     k_EWorkshopEnumerationTypeRankedByVote = 0,
     k_EWorkshopEnumerationTypeRecent = 1,
     k_EWorkshopEnumerationTypeTrending = 2,
@@ -549,55 +549,55 @@ const EWorkshopEnumerationType = enum(c_int) {
     k_EWorkshopEnumerationTypeContentByFriends = 5,
     k_EWorkshopEnumerationTypeRecentFromFollowedUsers = 6,
 };
-const EWorkshopVideoProvider = enum(c_int) {
+pub const EWorkshopVideoProvider = enum(c_int) {
     k_EWorkshopVideoProviderNone = 0,
     k_EWorkshopVideoProviderYoutube = 1,
 };
-const EUGCReadAction = enum(c_int) {
+pub const EUGCReadAction = enum(c_int) {
     k_EUGCRead_ContinueReadingUntilFinished = 0,
     k_EUGCRead_ContinueReading = 1,
     k_EUGCRead_Close = 2,
 };
-const ERemoteStorageLocalFileChange = enum(c_int) {
+pub const ERemoteStorageLocalFileChange = enum(c_int) {
     k_ERemoteStorageLocalFileChange_Invalid = 0,
     k_ERemoteStorageLocalFileChange_FileUpdated = 1,
     k_ERemoteStorageLocalFileChange_FileDeleted = 2,
 };
-const ERemoteStorageFilePathType = enum(c_int) {
+pub const ERemoteStorageFilePathType = enum(c_int) {
     k_ERemoteStorageFilePathType_Invalid = 0,
     k_ERemoteStorageFilePathType_Absolute = 1,
     k_ERemoteStorageFilePathType_APIFilename = 2,
 };
-const ELeaderboardDataRequest = enum(c_int) {
+pub const ELeaderboardDataRequest = enum(c_int) {
     k_ELeaderboardDataRequestGlobal = 0,
     k_ELeaderboardDataRequestGlobalAroundUser = 1,
     k_ELeaderboardDataRequestFriends = 2,
     k_ELeaderboardDataRequestUsers = 3,
 };
-const ELeaderboardSortMethod = enum(c_int) {
+pub const ELeaderboardSortMethod = enum(c_int) {
     k_ELeaderboardSortMethodNone = 0,
     k_ELeaderboardSortMethodAscending = 1,
     k_ELeaderboardSortMethodDescending = 2,
 };
-const ELeaderboardDisplayType = enum(c_int) {
+pub const ELeaderboardDisplayType = enum(c_int) {
     k_ELeaderboardDisplayTypeNone = 0,
     k_ELeaderboardDisplayTypeNumeric = 1,
     k_ELeaderboardDisplayTypeTimeSeconds = 2,
     k_ELeaderboardDisplayTypeTimeMilliSeconds = 3,
 };
-const ELeaderboardUploadScoreMethod = enum(c_int) {
+pub const ELeaderboardUploadScoreMethod = enum(c_int) {
     k_ELeaderboardUploadScoreMethodNone = 0,
     k_ELeaderboardUploadScoreMethodKeepBest = 1,
     k_ELeaderboardUploadScoreMethodForceUpdate = 2,
 };
-const ERegisterActivationCodeResult = enum(c_int) {
+pub const ERegisterActivationCodeResult = enum(c_int) {
     k_ERegisterActivationCodeResultOK = 0,
     k_ERegisterActivationCodeResultFail = 1,
     k_ERegisterActivationCodeResultAlreadyRegistered = 2,
     k_ERegisterActivationCodeResultTimeout = 3,
     k_ERegisterActivationCodeAlreadyOwned = 4,
 };
-const EP2PSessionError = enum(c_int) {
+pub const EP2PSessionError = enum(c_int) {
     k_EP2PSessionErrorNone = 0,
     k_EP2PSessionErrorNoRightsToApp = 2,
     k_EP2PSessionErrorTimeout = 4,
@@ -605,13 +605,13 @@ const EP2PSessionError = enum(c_int) {
     k_EP2PSessionErrorDestinationNotLoggedIn_DELETED = 3,
     k_EP2PSessionErrorMax = 5,
 };
-const EP2PSend = enum(c_int) {
+pub const EP2PSend = enum(c_int) {
     k_EP2PSendUnreliable = 0,
     k_EP2PSendUnreliableNoDelay = 1,
     k_EP2PSendReliable = 2,
     k_EP2PSendReliableWithBuffering = 3,
 };
-const ESNetSocketState = enum(c_int) {
+pub const ESNetSocketState = enum(c_int) {
     k_ESNetSocketStateInvalid = 0,
     k_ESNetSocketStateConnected = 1,
     k_ESNetSocketStateInitiated = 10,
@@ -624,12 +624,12 @@ const ESNetSocketState = enum(c_int) {
     k_ESNetSocketStateRemoteEndDisconnected = 24,
     k_ESNetSocketStateConnectionBroken = 25,
 };
-const ESNetSocketConnectionType = enum(c_int) {
+pub const ESNetSocketConnectionType = enum(c_int) {
     k_ESNetSocketConnectionTypeNotConnected = 0,
     k_ESNetSocketConnectionTypeUDP = 1,
     k_ESNetSocketConnectionTypeUDPRelay = 2,
 };
-const EVRScreenshotType = enum(c_int) {
+pub const EVRScreenshotType = enum(c_int) {
     k_EVRScreenshotType_None = 0,
     k_EVRScreenshotType_Mono = 1,
     k_EVRScreenshotType_Stereo = 2,
@@ -637,13 +637,13 @@ const EVRScreenshotType = enum(c_int) {
     k_EVRScreenshotType_MonoPanorama = 4,
     k_EVRScreenshotType_StereoPanorama = 5,
 };
-const AudioPlayback_Status = enum(c_int) {
+pub const AudioPlayback_Status = enum(c_int) {
     AudioPlayback_Undefined = 0,
     AudioPlayback_Playing = 1,
     AudioPlayback_Paused = 2,
     AudioPlayback_Idle = 3,
 };
-const EHTTPMethod = enum(c_int) {
+pub const EHTTPMethod = enum(c_int) {
     k_EHTTPMethodInvalid = 0,
     k_EHTTPMethodGET = 1,
     k_EHTTPMethodHEAD = 2,
@@ -653,7 +653,7 @@ const EHTTPMethod = enum(c_int) {
     k_EHTTPMethodOPTIONS = 6,
     k_EHTTPMethodPATCH = 7,
 };
-const EHTTPStatusCode = enum(c_int) {
+pub const EHTTPStatusCode = enum(c_int) {
     k_EHTTPStatusCodeInvalid = 0,
     k_EHTTPStatusCode100Continue = 100,
     k_EHTTPStatusCode101SwitchingProtocols = 101,
@@ -700,7 +700,7 @@ const EHTTPStatusCode = enum(c_int) {
     k_EHTTPStatusCode505HTTPVersionNotSupported = 505,
     k_EHTTPStatusCode5xxUnknown = 599,
 };
-const EInputSourceMode = enum(c_int) {
+pub const EInputSourceMode = enum(c_int) {
     k_EInputSourceMode_None = 0,
     k_EInputSourceMode_Dpad = 1,
     k_EInputSourceMode_Buttons = 2,
@@ -719,7 +719,7 @@ const EInputSourceMode = enum(c_int) {
     k_EInputSourceMode_SingleButton = 15,
     k_EInputSourceMode_Switches = 16,
 };
-const EInputActionOrigin = enum(c_int) {
+pub const EInputActionOrigin = enum(c_int) {
     k_EInputActionOrigin_None = 0,
     k_EInputActionOrigin_SteamController_A = 1,
     k_EInputActionOrigin_SteamController_B = 2,
@@ -1129,7 +1129,7 @@ const EInputActionOrigin = enum(c_int) {
     k_EInputActionOrigin_Count = 406,
     k_EInputActionOrigin_MaximumPossibleValue = 32767,
 };
-const EXboxOrigin = enum(c_int) {
+pub const EXboxOrigin = enum(c_int) {
     k_EXboxOrigin_A = 0,
     k_EXboxOrigin_B = 1,
     k_EXboxOrigin_X = 2,
@@ -1160,21 +1160,21 @@ const EXboxOrigin = enum(c_int) {
     k_EXboxOrigin_DPad_East = 27,
     k_EXboxOrigin_Count = 28,
 };
-const ESteamControllerPad = enum(c_int) {
+pub const ESteamControllerPad = enum(c_int) {
     k_ESteamControllerPad_Left = 0,
     k_ESteamControllerPad_Right = 1,
 };
-const EControllerHapticLocation = enum(c_int) {
+pub const EControllerHapticLocation = enum(c_int) {
     k_EControllerHapticLocation_Left = 1,
     k_EControllerHapticLocation_Right = 2,
     k_EControllerHapticLocation_Both = 3,
 };
-const EControllerHapticType = enum(c_int) {
+pub const EControllerHapticType = enum(c_int) {
     k_EControllerHapticType_Off = 0,
     k_EControllerHapticType_Tick = 1,
     k_EControllerHapticType_Click = 2,
 };
-const ESteamInputType = enum(c_int) {
+pub const ESteamInputType = enum(c_int) {
     k_ESteamInputType_Unknown = 0,
     k_ESteamInputType_SteamController = 1,
     k_ESteamInputType_XBox360Controller = 2,
@@ -1193,35 +1193,35 @@ const ESteamInputType = enum(c_int) {
     k_ESteamInputType_Count = 15,
     k_ESteamInputType_MaximumPossibleValue = 255,
 };
-const ESteamInputConfigurationEnableType = enum(c_int) {
+pub const ESteamInputConfigurationEnableType = enum(c_int) {
     k_ESteamInputConfigurationEnableType_None = 0,
     k_ESteamInputConfigurationEnableType_Playstation = 1,
     k_ESteamInputConfigurationEnableType_Xbox = 2,
     k_ESteamInputConfigurationEnableType_Generic = 4,
     k_ESteamInputConfigurationEnableType_Switch = 8,
 };
-const ESteamInputLEDFlag = enum(c_int) {
+pub const ESteamInputLEDFlag = enum(c_int) {
     k_ESteamInputLEDFlag_SetColor = 0,
     k_ESteamInputLEDFlag_RestoreUserDefault = 1,
 };
-const ESteamInputGlyphSize = enum(c_int) {
+pub const ESteamInputGlyphSize = enum(c_int) {
     k_ESteamInputGlyphSize_Small = 0,
     k_ESteamInputGlyphSize_Medium = 1,
     k_ESteamInputGlyphSize_Large = 2,
     k_ESteamInputGlyphSize_Count = 3,
 };
-const ESteamInputGlyphStyle = enum(c_int) {
+pub const ESteamInputGlyphStyle = enum(c_int) {
     ESteamInputGlyphStyle_Knockout = 0,
     ESteamInputGlyphStyle_Light = 1,
     ESteamInputGlyphStyle_Dark = 2,
     ESteamInputGlyphStyle_NeutralColorABXY = 16,
     ESteamInputGlyphStyle_SolidABXY = 32,
 };
-const ESteamInputActionEventType = enum(c_int) {
+pub const ESteamInputActionEventType = enum(c_int) {
     ESteamInputActionEventType_DigitalAction = 0,
     ESteamInputActionEventType_AnalogAction = 1,
 };
-const EControllerActionOrigin = enum(c_int) {
+pub const EControllerActionOrigin = enum(c_int) {
     k_EControllerActionOrigin_None = 0,
     k_EControllerActionOrigin_A = 1,
     k_EControllerActionOrigin_B = 2,
@@ -1603,11 +1603,11 @@ const EControllerActionOrigin = enum(c_int) {
     k_EControllerActionOrigin_Count = 378,
     k_EControllerActionOrigin_MaximumPossibleValue = 32767,
 };
-const ESteamControllerLEDFlag = enum(c_int) {
+pub const ESteamControllerLEDFlag = enum(c_int) {
     k_ESteamControllerLEDFlag_SetColor = 0,
     k_ESteamControllerLEDFlag_RestoreUserDefault = 1,
 };
-const EUGCMatchingUGCType = enum(c_int) {
+pub const EUGCMatchingUGCType = enum(c_int) {
     k_EUGCMatchingUGCType_Items = 0,
     k_EUGCMatchingUGCType_Items_Mtx = 1,
     k_EUGCMatchingUGCType_Items_ReadyToUse = 2,
@@ -1623,7 +1623,7 @@ const EUGCMatchingUGCType = enum(c_int) {
     k_EUGCMatchingUGCType_GameManagedItems = 12,
     k_EUGCMatchingUGCType_All = -1,
 };
-const EUserUGCList = enum(c_int) {
+pub const EUserUGCList = enum(c_int) {
     k_EUserUGCList_Published = 0,
     k_EUserUGCList_VotedOn = 1,
     k_EUserUGCList_VotedUp = 2,
@@ -1634,7 +1634,7 @@ const EUserUGCList = enum(c_int) {
     k_EUserUGCList_UsedOrPlayed = 7,
     k_EUserUGCList_Followed = 8,
 };
-const EUserUGCListSortOrder = enum(c_int) {
+pub const EUserUGCListSortOrder = enum(c_int) {
     k_EUserUGCListSortOrder_CreationOrderDesc = 0,
     k_EUserUGCListSortOrder_CreationOrderAsc = 1,
     k_EUserUGCListSortOrder_TitleAsc = 2,
@@ -1643,7 +1643,7 @@ const EUserUGCListSortOrder = enum(c_int) {
     k_EUserUGCListSortOrder_VoteScoreDesc = 5,
     k_EUserUGCListSortOrder_ForModeration = 6,
 };
-const EUGCQuery = enum(c_int) {
+pub const EUGCQuery = enum(c_int) {
     k_EUGCQuery_RankedByVote = 0,
     k_EUGCQuery_RankedByPublicationDate = 1,
     k_EUGCQuery_AcceptedForGameRankedByAcceptanceDate = 2,
@@ -1665,7 +1665,7 @@ const EUGCQuery = enum(c_int) {
     k_EUGCQuery_RankedByLifetimePlaytimeSessions = 18,
     k_EUGCQuery_RankedByLastUpdatedDate = 19,
 };
-const EItemUpdateStatus = enum(c_int) {
+pub const EItemUpdateStatus = enum(c_int) {
     k_EItemUpdateStatusInvalid = 0,
     k_EItemUpdateStatusPreparingConfig = 1,
     k_EItemUpdateStatusPreparingContent = 2,
@@ -1673,7 +1673,7 @@ const EItemUpdateStatus = enum(c_int) {
     k_EItemUpdateStatusUploadingPreviewFile = 4,
     k_EItemUpdateStatusCommittingChanges = 5,
 };
-const EItemState = enum(c_int) {
+pub const EItemState = enum(c_int) {
     k_EItemStateNone = 0,
     k_EItemStateSubscribed = 1,
     k_EItemStateLegacyItem = 2,
@@ -1682,7 +1682,7 @@ const EItemState = enum(c_int) {
     k_EItemStateDownloading = 16,
     k_EItemStateDownloadPending = 32,
 };
-const EItemStatistic = enum(c_int) {
+pub const EItemStatistic = enum(c_int) {
     k_EItemStatistic_NumSubscriptions = 0,
     k_EItemStatistic_NumFavorites = 1,
     k_EItemStatistic_NumFollowers = 2,
@@ -1697,7 +1697,7 @@ const EItemStatistic = enum(c_int) {
     k_EItemStatistic_NumSecondsPlayedDuringTimePeriod = 11,
     k_EItemStatistic_NumPlaytimeSessionsDuringTimePeriod = 12,
 };
-const EItemPreviewType = enum(c_int) {
+pub const EItemPreviewType = enum(c_int) {
     k_EItemPreviewType_Image = 0,
     k_EItemPreviewType_YouTubeVideo = 1,
     k_EItemPreviewType_Sketchfab = 2,
@@ -1705,12 +1705,12 @@ const EItemPreviewType = enum(c_int) {
     k_EItemPreviewType_EnvironmentMap_LatLong = 4,
     k_EItemPreviewType_ReservedMax = 255,
 };
-const ESteamItemFlags = enum(c_int) {
+pub const ESteamItemFlags = enum(c_int) {
     k_ESteamItemNoTrade = 1,
     k_ESteamItemRemoved = 256,
     k_ESteamItemConsumed = 512,
 };
-const EParentalFeature = enum(c_int) {
+pub const EParentalFeature = enum(c_int) {
     k_EFeatureInvalid = 0,
     k_EFeatureStore = 1,
     k_EFeatureCommunity = 2,
@@ -1727,14 +1727,14 @@ const EParentalFeature = enum(c_int) {
     k_EFeatureSiteLicense = 13,
     k_EFeatureMax = 14,
 };
-const ESteamDeviceFormFactor = enum(c_int) {
+pub const ESteamDeviceFormFactor = enum(c_int) {
     k_ESteamDeviceFormFactorUnknown = 0,
     k_ESteamDeviceFormFactorPhone = 1,
     k_ESteamDeviceFormFactorTablet = 2,
     k_ESteamDeviceFormFactorComputer = 3,
     k_ESteamDeviceFormFactorTV = 4,
 };
-const ESteamNetworkingAvailability = enum(c_int) {
+pub const ESteamNetworkingAvailability = enum(c_int) {
     k_ESteamNetworkingAvailability_CannotTry = -102,
     k_ESteamNetworkingAvailability_Failed = -101,
     k_ESteamNetworkingAvailability_Previously = -100,
@@ -1746,7 +1746,7 @@ const ESteamNetworkingAvailability = enum(c_int) {
     k_ESteamNetworkingAvailability_Unknown = 0,
     k_ESteamNetworkingAvailability__Force32bit = 2147483647,
 };
-const ESteamNetworkingIdentityType = enum(c_int) {
+pub const ESteamNetworkingIdentityType = enum(c_int) {
     k_ESteamNetworkingIdentityType_Invalid = 0,
     k_ESteamNetworkingIdentityType_SteamID = 16,
     k_ESteamNetworkingIdentityType_XboxPairwiseID = 17,
@@ -1758,14 +1758,14 @@ const ESteamNetworkingIdentityType = enum(c_int) {
     k_ESteamNetworkingIdentityType_UnknownType = 4,
     k_ESteamNetworkingIdentityType__Force32bit = 2147483647,
 };
-const ESteamNetworkingFakeIPType = enum(c_int) {
+pub const ESteamNetworkingFakeIPType = enum(c_int) {
     k_ESteamNetworkingFakeIPType_Invalid = 0,
     k_ESteamNetworkingFakeIPType_NotFake = 1,
     k_ESteamNetworkingFakeIPType_GlobalIPv4 = 2,
     k_ESteamNetworkingFakeIPType_LocalIPv4 = 3,
     k_ESteamNetworkingFakeIPType__Force32Bit = 2147483647,
 };
-const ESteamNetworkingConnectionState = enum(c_int) {
+pub const ESteamNetworkingConnectionState = enum(c_int) {
     k_ESteamNetworkingConnectionState_None = 0,
     k_ESteamNetworkingConnectionState_Connecting = 1,
     k_ESteamNetworkingConnectionState_FindingRoute = 2,
@@ -1777,7 +1777,7 @@ const ESteamNetworkingConnectionState = enum(c_int) {
     k_ESteamNetworkingConnectionState_Dead = -3,
     k_ESteamNetworkingConnectionState__Force32Bit = 2147483647,
 };
-const ESteamNetConnectionEnd = enum(c_int) {
+pub const ESteamNetConnectionEnd = enum(c_int) {
     k_ESteamNetConnectionEnd_Invalid = 0,
     k_ESteamNetConnectionEnd_App_Min = 1000,
     k_ESteamNetConnectionEnd_App_Generic = 1000,
@@ -1812,14 +1812,14 @@ const ESteamNetConnectionEnd = enum(c_int) {
     k_ESteamNetConnectionEnd_Misc_Max = 5999,
     k_ESteamNetConnectionEnd__Force32Bit = 2147483647,
 };
-const ESteamNetworkingConfigScope = enum(c_int) {
+pub const ESteamNetworkingConfigScope = enum(c_int) {
     k_ESteamNetworkingConfig_Global = 1,
     k_ESteamNetworkingConfig_SocketsInterface = 2,
     k_ESteamNetworkingConfig_ListenSocket = 3,
     k_ESteamNetworkingConfig_Connection = 4,
     k_ESteamNetworkingConfigScope__Force32Bit = 2147483647,
 };
-const ESteamNetworkingConfigDataType = enum(c_int) {
+pub const ESteamNetworkingConfigDataType = enum(c_int) {
     k_ESteamNetworkingConfig_Int32 = 1,
     k_ESteamNetworkingConfig_Int64 = 2,
     k_ESteamNetworkingConfig_Float = 3,
@@ -1827,7 +1827,7 @@ const ESteamNetworkingConfigDataType = enum(c_int) {
     k_ESteamNetworkingConfig_Ptr = 5,
     k_ESteamNetworkingConfigDataType__Force32Bit = 2147483647,
 };
-const ESteamNetworkingConfigValue = enum(c_int) {
+pub const ESteamNetworkingConfigValue = enum(c_int) {
     k_ESteamNetworkingConfig_Invalid = 0,
     k_ESteamNetworkingConfig_TimeoutInitial = 24,
     k_ESteamNetworkingConfig_TimeoutConnected = 25,
@@ -1887,7 +1887,7 @@ const ESteamNetworkingConfigValue = enum(c_int) {
     k_ESteamNetworkingConfig_DELETED_EnumerateDevVars = 35,
     k_ESteamNetworkingConfigValue__Force32Bit = 2147483647,
 };
-const ESteamNetworkingGetConfigValueResult = enum(c_int) {
+pub const ESteamNetworkingGetConfigValueResult = enum(c_int) {
     k_ESteamNetworkingGetConfigValue_BadValue = -1,
     k_ESteamNetworkingGetConfigValue_BadScopeObj = -2,
     k_ESteamNetworkingGetConfigValue_BufferTooSmall = -3,
@@ -1895,7 +1895,7 @@ const ESteamNetworkingGetConfigValueResult = enum(c_int) {
     k_ESteamNetworkingGetConfigValue_OKInherited = 2,
     k_ESteamNetworkingGetConfigValueResult__Force32Bit = 2147483647,
 };
-const ESteamNetworkingSocketsDebugOutputType = enum(c_int) {
+pub const ESteamNetworkingSocketsDebugOutputType = enum(c_int) {
     k_ESteamNetworkingSocketsDebugOutputType_None = 0,
     k_ESteamNetworkingSocketsDebugOutputType_Bug = 1,
     k_ESteamNetworkingSocketsDebugOutputType_Error = 2,
@@ -1907,7 +1907,7 @@ const ESteamNetworkingSocketsDebugOutputType = enum(c_int) {
     k_ESteamNetworkingSocketsDebugOutputType_Everything = 8,
     k_ESteamNetworkingSocketsDebugOutputType__Force32Bit = 2147483647,
 };
-const EServerMode = enum(c_int) {
+pub const EServerMode = enum(c_int) {
     eServerModeInvalid = 0,
     eServerModeNoAuthentication = 1,
     eServerModeAuthentication = 2,
