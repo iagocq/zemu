@@ -1400,19 +1400,19 @@ pub const ISteamUserStats = struct {
         p("NOT IMPLEMENTED SteamAPI_ISteamUserStats_RequestCurrentStats\n\n", .{  });
         return undefined;
     }
-    pub fn GetStat(pchName: [*c]const u8, pData: [*c]i32) callconv(.C) bool {
+    pub fn GetStatInt32(pchName: [*c]const u8, pData: [*c]i32) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_ISteamUserStats_GetStatInt32:\n\t- pchName = {any}\n\t- pData = {any}\n\n", .{ pchName, pData });
         return undefined;
     }
-    pub fn GetStat(pchName: [*c]const u8, pData: [*c]f32) callconv(.C) bool {
+    pub fn GetStatFloat(pchName: [*c]const u8, pData: [*c]f32) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_ISteamUserStats_GetStatFloat:\n\t- pchName = {any}\n\t- pData = {any}\n\n", .{ pchName, pData });
         return undefined;
     }
-    pub fn SetStat(pchName: [*c]const u8, nData: i32) callconv(.C) bool {
+    pub fn SetStatInt32(pchName: [*c]const u8, nData: i32) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_ISteamUserStats_SetStatInt32:\n\t- pchName = {any}\n\t- nData = {any}\n\n", .{ pchName, nData });
         return undefined;
     }
-    pub fn SetStat(pchName: [*c]const u8, fData: f32) callconv(.C) bool {
+    pub fn SetStatFloat(pchName: [*c]const u8, fData: f32) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_ISteamUserStats_SetStatFloat:\n\t- pchName = {any}\n\t- fData = {any}\n\n", .{ pchName, fData });
         return undefined;
     }
@@ -1464,11 +1464,11 @@ pub const ISteamUserStats = struct {
         p("NOT IMPLEMENTED SteamAPI_ISteamUserStats_RequestUserStats:\n\t- steamIDUser = {any}\n\n", .{ steamIDUser });
         return undefined;
     }
-    pub fn GetUserStat(steamIDUser: t.CSteamID, pchName: [*c]const u8, pData: [*c]i32) callconv(.C) bool {
+    pub fn GetUserStatInt32(steamIDUser: t.CSteamID, pchName: [*c]const u8, pData: [*c]i32) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_ISteamUserStats_GetUserStatInt32:\n\t- steamIDUser = {any}\n\t- pchName = {any}\n\t- pData = {any}\n\n", .{ steamIDUser, pchName, pData });
         return undefined;
     }
-    pub fn GetUserStat(steamIDUser: t.CSteamID, pchName: [*c]const u8, pData: [*c]f32) callconv(.C) bool {
+    pub fn GetUserStatFloat(steamIDUser: t.CSteamID, pchName: [*c]const u8, pData: [*c]f32) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_ISteamUserStats_GetUserStatFloat:\n\t- steamIDUser = {any}\n\t- pchName = {any}\n\t- pData = {any}\n\n", .{ steamIDUser, pchName, pData });
         return undefined;
     }
@@ -1552,27 +1552,27 @@ pub const ISteamUserStats = struct {
         p("NOT IMPLEMENTED SteamAPI_ISteamUserStats_RequestGlobalStats:\n\t- nHistoryDays = {any}\n\n", .{ nHistoryDays });
         return undefined;
     }
-    pub fn GetGlobalStat(pchStatName: [*c]const u8, pData: [*c]i32) callconv(.C) bool {
+    pub fn GetGlobalStatInt64(pchStatName: [*c]const u8, pData: [*c]i32) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_ISteamUserStats_GetGlobalStatInt64:\n\t- pchStatName = {any}\n\t- pData = {any}\n\n", .{ pchStatName, pData });
         return undefined;
     }
-    pub fn GetGlobalStat(pchStatName: [*c]const u8, pData: [*c]f64) callconv(.C) bool {
+    pub fn GetGlobalStatDouble(pchStatName: [*c]const u8, pData: [*c]f64) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_ISteamUserStats_GetGlobalStatDouble:\n\t- pchStatName = {any}\n\t- pData = {any}\n\n", .{ pchStatName, pData });
         return undefined;
     }
-    pub fn GetGlobalStatHistory(pchStatName: [*c]const u8, pData: [*c]i32, cubData: t.uint32) callconv(.C) i32 {
+    pub fn GetGlobalStatHistoryInt64(pchStatName: [*c]const u8, pData: [*c]i32, cubData: t.uint32) callconv(.C) i32 {
         p("NOT IMPLEMENTED SteamAPI_ISteamUserStats_GetGlobalStatHistoryInt64:\n\t- pchStatName = {any}\n\t- pData = {any}\n\t- cubData = {any}\n\n", .{ pchStatName, pData, cubData });
         return undefined;
     }
-    pub fn GetGlobalStatHistory(pchStatName: [*c]const u8, pData: [*c]f64, cubData: t.uint32) callconv(.C) i32 {
+    pub fn GetGlobalStatHistoryDouble(pchStatName: [*c]const u8, pData: [*c]f64, cubData: t.uint32) callconv(.C) i32 {
         p("NOT IMPLEMENTED SteamAPI_ISteamUserStats_GetGlobalStatHistoryDouble:\n\t- pchStatName = {any}\n\t- pData = {any}\n\t- cubData = {any}\n\n", .{ pchStatName, pData, cubData });
         return undefined;
     }
-    pub fn GetAchievementProgressLimits(pchName: [*c]const u8, pnMinProgress: [*c]i32, pnMaxProgress: [*c]i32) callconv(.C) bool {
+    pub fn GetAchievementProgressLimitsInt32(pchName: [*c]const u8, pnMinProgress: [*c]i32, pnMaxProgress: [*c]i32) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_ISteamUserStats_GetAchievementProgressLimitsInt32:\n\t- pchName = {any}\n\t- pnMinProgress = {any}\n\t- pnMaxProgress = {any}\n\n", .{ pchName, pnMinProgress, pnMaxProgress });
         return undefined;
     }
-    pub fn GetAchievementProgressLimits(pchName: [*c]const u8, pfMinProgress: [*c]f32, pfMaxProgress: [*c]f32) callconv(.C) bool {
+    pub fn GetAchievementProgressLimitsFloat(pchName: [*c]const u8, pfMinProgress: [*c]f32, pfMaxProgress: [*c]f32) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_ISteamUserStats_GetAchievementProgressLimitsFloat:\n\t- pchName = {any}\n\t- pfMinProgress = {any}\n\t- pfMaxProgress = {any}\n\n", .{ pchName, pfMinProgress, pfMaxProgress });
         return undefined;
     }
@@ -2479,11 +2479,11 @@ pub const ISteamUGC = struct {
         p("NOT IMPLEMENTED SteamAPI_ISteamUGC_CreateQueryUserUGCRequest:\n\t- unAccountID = {any}\n\t- eListType = {any}\n\t- eMatchingUGCType = {any}\n\t- eSortOrder = {any}\n\t- nCreatorAppID = {any}\n\t- nConsumerAppID = {any}\n\t- unPage = {any}\n\n", .{ unAccountID, eListType, eMatchingUGCType, eSortOrder, nCreatorAppID, nConsumerAppID, unPage });
         return undefined;
     }
-    pub fn CreateQueryAllUGCRequest(eQueryType: t.EUGCQuery, eMatchingeMatchingUGCTypeFileType: t.EUGCMatchingUGCType, nCreatorAppID: t.AppId_t, nConsumerAppID: t.AppId_t, unPage: t.uint32) callconv(.C) t.UGCQueryHandle_t {
+    pub fn CreateQueryAllUGCRequestPage(eQueryType: t.EUGCQuery, eMatchingeMatchingUGCTypeFileType: t.EUGCMatchingUGCType, nCreatorAppID: t.AppId_t, nConsumerAppID: t.AppId_t, unPage: t.uint32) callconv(.C) t.UGCQueryHandle_t {
         p("NOT IMPLEMENTED SteamAPI_ISteamUGC_CreateQueryAllUGCRequestPage:\n\t- eQueryType = {any}\n\t- eMatchingeMatchingUGCTypeFileType = {any}\n\t- nCreatorAppID = {any}\n\t- nConsumerAppID = {any}\n\t- unPage = {any}\n\n", .{ eQueryType, eMatchingeMatchingUGCTypeFileType, nCreatorAppID, nConsumerAppID, unPage });
         return undefined;
     }
-    pub fn CreateQueryAllUGCRequest(eQueryType: t.EUGCQuery, eMatchingeMatchingUGCTypeFileType: t.EUGCMatchingUGCType, nCreatorAppID: t.AppId_t, nConsumerAppID: t.AppId_t, pchCursor: [*c]const u8) callconv(.C) t.UGCQueryHandle_t {
+    pub fn CreateQueryAllUGCRequestCursor(eQueryType: t.EUGCQuery, eMatchingeMatchingUGCTypeFileType: t.EUGCMatchingUGCType, nCreatorAppID: t.AppId_t, nConsumerAppID: t.AppId_t, pchCursor: [*c]const u8) callconv(.C) t.UGCQueryHandle_t {
         p("NOT IMPLEMENTED SteamAPI_ISteamUGC_CreateQueryAllUGCRequestCursor:\n\t- eQueryType = {any}\n\t- eMatchingeMatchingUGCTypeFileType = {any}\n\t- nCreatorAppID = {any}\n\t- nConsumerAppID = {any}\n\t- pchCursor = {any}\n\n", .{ eQueryType, eMatchingeMatchingUGCTypeFileType, nCreatorAppID, nConsumerAppID, pchCursor });
         return undefined;
     }
@@ -2543,7 +2543,7 @@ pub const ISteamUGC = struct {
         p("NOT IMPLEMENTED SteamAPI_ISteamUGC_GetQueryUGCKeyValueTag:\n\t- handle = {any}\n\t- index = {any}\n\t- keyValueTagIndex = {any}\n\t- pchKey = {any}\n\t- cchKeySize = {any}\n\t- pchValue = {any}\n\t- cchValueSize = {any}\n\n", .{ handle, index, keyValueTagIndex, pchKey, cchKeySize, pchValue, cchValueSize });
         return undefined;
     }
-    pub fn GetQueryUGCKeyValueTag(handle: t.UGCQueryHandle_t, index: t.uint32, pchKey: [*c]const u8, pchValue: [*c]u8, cchValueSize: t.uint32) callconv(.C) bool {
+    pub fn GetQueryFirstUGCKeyValueTag(handle: t.UGCQueryHandle_t, index: t.uint32, pchKey: [*c]const u8, pchValue: [*c]u8, cchValueSize: t.uint32) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_ISteamUGC_GetQueryFirstUGCKeyValueTag:\n\t- handle = {any}\n\t- index = {any}\n\t- pchKey = {any}\n\t- pchValue = {any}\n\t- cchValueSize = {any}\n\n", .{ handle, index, pchKey, pchValue, cchValueSize });
         return undefined;
     }
@@ -2691,8 +2691,8 @@ pub const ISteamUGC = struct {
         p("NOT IMPLEMENTED SteamAPI_ISteamUGC_AddItemKeyValueTag:\n\t- handle = {any}\n\t- pchKey = {any}\n\t- pchValue = {any}\n\n", .{ handle, pchKey, pchValue });
         return undefined;
     }
-    pub fn AddItemPreviewFile(handle: t.UGCUpdateHandle_t, pszPreviewFile: [*c]const u8, type: t.EItemPreviewType) callconv(.C) bool {
-        p("NOT IMPLEMENTED SteamAPI_ISteamUGC_AddItemPreviewFile:\n\t- handle = {any}\n\t- pszPreviewFile = {any}\n\t- type = {any}\n\n", .{ handle, pszPreviewFile, type });
+    pub fn AddItemPreviewFile(handle: t.UGCUpdateHandle_t, pszPreviewFile: [*c]const u8, @"type": t.EItemPreviewType) callconv(.C) bool {
+        p("NOT IMPLEMENTED SteamAPI_ISteamUGC_AddItemPreviewFile:\n\t- handle = {any}\n\t- pszPreviewFile = {any}\n\t- type = {any}\n\n", .{ handle, pszPreviewFile, @"type" });
         return undefined;
     }
     pub fn AddItemPreviewVideo(handle: t.UGCUpdateHandle_t, pszVideoID: [*c]const u8) callconv(.C) bool {
@@ -3195,19 +3195,19 @@ pub const ISteamInventory = struct {
         p("NOT IMPLEMENTED SteamAPI_ISteamInventory_RemoveProperty:\n\t- handle = {any}\n\t- nItemID = {any}\n\t- pchPropertyName = {any}\n\n", .{ handle, nItemID, pchPropertyName });
         return undefined;
     }
-    pub fn SetProperty(handle: t.SteamInventoryUpdateHandle_t, nItemID: t.SteamItemInstanceID_t, pchPropertyName: [*c]const u8, pchPropertyValue: [*c]const u8) callconv(.C) bool {
+    pub fn SetPropertyString(handle: t.SteamInventoryUpdateHandle_t, nItemID: t.SteamItemInstanceID_t, pchPropertyName: [*c]const u8, pchPropertyValue: [*c]const u8) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_ISteamInventory_SetPropertyString:\n\t- handle = {any}\n\t- nItemID = {any}\n\t- pchPropertyName = {any}\n\t- pchPropertyValue = {any}\n\n", .{ handle, nItemID, pchPropertyName, pchPropertyValue });
         return undefined;
     }
-    pub fn SetProperty(handle: t.SteamInventoryUpdateHandle_t, nItemID: t.SteamItemInstanceID_t, pchPropertyName: [*c]const u8, bValue: bool) callconv(.C) bool {
+    pub fn SetPropertyBool(handle: t.SteamInventoryUpdateHandle_t, nItemID: t.SteamItemInstanceID_t, pchPropertyName: [*c]const u8, bValue: bool) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_ISteamInventory_SetPropertyBool:\n\t- handle = {any}\n\t- nItemID = {any}\n\t- pchPropertyName = {any}\n\t- bValue = {any}\n\n", .{ handle, nItemID, pchPropertyName, bValue });
         return undefined;
     }
-    pub fn SetProperty(handle: t.SteamInventoryUpdateHandle_t, nItemID: t.SteamItemInstanceID_t, pchPropertyName: [*c]const u8, nValue: i32) callconv(.C) bool {
+    pub fn SetPropertyInt64(handle: t.SteamInventoryUpdateHandle_t, nItemID: t.SteamItemInstanceID_t, pchPropertyName: [*c]const u8, nValue: i32) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_ISteamInventory_SetPropertyInt64:\n\t- handle = {any}\n\t- nItemID = {any}\n\t- pchPropertyName = {any}\n\t- nValue = {any}\n\n", .{ handle, nItemID, pchPropertyName, nValue });
         return undefined;
     }
-    pub fn SetProperty(handle: t.SteamInventoryUpdateHandle_t, nItemID: t.SteamItemInstanceID_t, pchPropertyName: [*c]const u8, flValue: f32) callconv(.C) bool {
+    pub fn SetPropertyFloat(handle: t.SteamInventoryUpdateHandle_t, nItemID: t.SteamItemInstanceID_t, pchPropertyName: [*c]const u8, flValue: f32) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_ISteamInventory_SetPropertyFloat:\n\t- handle = {any}\n\t- nItemID = {any}\n\t- pchPropertyName = {any}\n\t- flValue = {any}\n\n", .{ handle, nItemID, pchPropertyName, flValue });
         return undefined;
     }
@@ -3899,11 +3899,11 @@ pub const ISteamGameServerStats = struct {
         p("NOT IMPLEMENTED SteamAPI_ISteamGameServerStats_RequestUserStats:\n\t- steamIDUser = {any}\n\n", .{ steamIDUser });
         return undefined;
     }
-    pub fn GetUserStat(steamIDUser: t.CSteamID, pchName: [*c]const u8, pData: [*c]i32) callconv(.C) bool {
+    pub fn GetUserStatInt32(steamIDUser: t.CSteamID, pchName: [*c]const u8, pData: [*c]i32) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_ISteamGameServerStats_GetUserStatInt32:\n\t- steamIDUser = {any}\n\t- pchName = {any}\n\t- pData = {any}\n\n", .{ steamIDUser, pchName, pData });
         return undefined;
     }
-    pub fn GetUserStat(steamIDUser: t.CSteamID, pchName: [*c]const u8, pData: [*c]f32) callconv(.C) bool {
+    pub fn GetUserStatFloat(steamIDUser: t.CSteamID, pchName: [*c]const u8, pData: [*c]f32) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_ISteamGameServerStats_GetUserStatFloat:\n\t- steamIDUser = {any}\n\t- pchName = {any}\n\t- pData = {any}\n\n", .{ steamIDUser, pchName, pData });
         return undefined;
     }
@@ -3911,11 +3911,11 @@ pub const ISteamGameServerStats = struct {
         p("NOT IMPLEMENTED SteamAPI_ISteamGameServerStats_GetUserAchievement:\n\t- steamIDUser = {any}\n\t- pchName = {any}\n\t- pbAchieved = {any}\n\n", .{ steamIDUser, pchName, pbAchieved });
         return undefined;
     }
-    pub fn SetUserStat(steamIDUser: t.CSteamID, pchName: [*c]const u8, nData: i32) callconv(.C) bool {
+    pub fn SetUserStatInt32(steamIDUser: t.CSteamID, pchName: [*c]const u8, nData: i32) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_ISteamGameServerStats_SetUserStatInt32:\n\t- steamIDUser = {any}\n\t- pchName = {any}\n\t- nData = {any}\n\n", .{ steamIDUser, pchName, nData });
         return undefined;
     }
-    pub fn SetUserStat(steamIDUser: t.CSteamID, pchName: [*c]const u8, fData: f32) callconv(.C) bool {
+    pub fn SetUserStatFloat(steamIDUser: t.CSteamID, pchName: [*c]const u8, fData: f32) callconv(.C) bool {
         p("NOT IMPLEMENTED SteamAPI_ISteamGameServerStats_SetUserStatFloat:\n\t- steamIDUser = {any}\n\t- pchName = {any}\n\t- fData = {any}\n\n", .{ steamIDUser, pchName, fData });
         return undefined;
     }

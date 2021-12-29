@@ -138,6 +138,7 @@ const Generator = struct {
     }
 
     pub fn destroy(self: *Self) !void {
+        _ = self;
         const cwd = std.fs.cwd();
         const files = .{ "typedefs.zig", "enums.zig", "consts.zig", "callback_structs.zig", "structs.zig", "interfaces.zig" };
         for (files) |file| {
@@ -309,8 +310,19 @@ const Generator = struct {
 
     fn writeParam(writer: anytype, param: Param, l: usize) !void {
         _ = l;
-        try format(writer, "{s}: ", .{ param.paramname }, 0);
+        try writeParamName(writer, param, l);
+        _ = try writer.write(": ");
         try writeType(writer, param.paramtype);
+    }
+
+    fn writeParamName(writer: anytype, param: Param, l: usize) !void {
+        _ = l;
+        const name = param.paramname;
+        if (eql(u8, name, "type")) {
+            _ = try writer.write("@\"type\"");
+        } else {
+            _ = try writer.write(name);
+        }
     }
 
     fn writeFnBodyNotImplemented(writer: anytype, method: Method, l: usize) !void {
@@ -322,7 +334,7 @@ const Generator = struct {
         }
         try format(writer, "\\n\", .{{ ", .{}, 0);
         for (method.params) |param, i| {
-            try format(writer, "{s}", .{ param.paramname }, 0);
+            try writeParamName(writer, param, 0);
             if (i < method.params.len-1) {
                 try format(writer, ", ", .{}, 0);
             }
@@ -356,8 +368,11 @@ const Generator = struct {
         for (interface.enums orelse &[_]Enum{}) |enum_def| {
             try writeEnum(writer, enum_def, l+1);
         }
+        const skip_len = "SteamAPI_".len + interface.classname.len + 1;
         for (interface.methods) |method| {
-            try writeMethod(writer, method, l+1);
+            var flat_method = method;
+            flat_method.methodname = method.methodname_flat[skip_len..];
+            try writeMethod(writer, flat_method, l+1);
         }
         try format(writer, "}};\n", .{}, l);
 
