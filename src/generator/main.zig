@@ -113,7 +113,7 @@ const Generator = struct {
     const Self = @This();
     const common_header = "const t = @import(\"../types.zig\");\n";
 
-    fn init(allocator: std.mem.Allocator, in_file_path: []const u8, out_dir_path: []const u8) !Self {
+    pub fn init(allocator: std.mem.Allocator, in_file_path: []const u8, out_dir_path: []const u8) !Self {
         var file_content: []u8 = init: {
             var in_file = try std.fs.cwd().openFile(in_file_path, .{});
             defer in_file.close();
@@ -133,11 +133,22 @@ const Generator = struct {
         };
     }
 
-    fn deinit(self: *Self) void {
+    pub fn deinit(self: *Self) void {
         json.parseFree(FlatInterface, self.interface, .{ .allocator = self.allocator });
     }
 
-    fn generate(self: *Self) !void {
+    pub fn destroy(self: *Self) !void {
+        const cwd = std.fs.cwd();
+        const files = .{ "typedefs.zig", "enums.zig", "consts.zig", "callback_structs.zig", "structs.zig", "interfaces.zig" };
+        for (files) |file| {
+            cwd.deleteFile(file) catch |err| {
+                std.log.err("Failed to delete file {s}: {any}\n", .{ file, err });
+                return err;
+            };
+        }
+    }
+
+    pub fn generate(self: *Self) !void {
         const cwd = std.fs.cwd();
         try cwd.makePath(self.out_dir_path);
         var out_dir = try cwd.openDir(self.out_dir_path, .{});
@@ -533,10 +544,11 @@ pub fn main() void {
 
     var in_file_path = if (args.len > 1) args[1] else "src/generator/steam_api.json";
     var out_dir_path = if (args.len > 2) args[2] else "src/generated";
+    var action = if (args.len > 3) args[3] else "";
 
     var cwd = std.fs.cwd();
 
-    var should_generate = true;
+    var should_generate = eql(u8, "force", action);
     if (cwd.openFile(in_file_path, .{})) |in_file| {
         var callback_path = std.fs.path.join(allocator, &.{ out_dir_path, "callback_structs.zig" }) catch unreachable;
         defer allocator.free(callback_path);
