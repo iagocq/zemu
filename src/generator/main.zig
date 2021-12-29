@@ -95,9 +95,10 @@ const Typedef = struct {
     type: str,
 };
 
+const eql = std.mem.eql;
 fn pEql(a: []const u8, b: []const u8) bool {
     const max = @minimum(a.len, b.len);
-    return std.mem.eql(u8, a[0..max], b);
+    return eql(u8, a[0..max], b);
 }
 
 fn last(a: []const u8) u8 {
@@ -143,12 +144,11 @@ const Generator = struct {
         defer out_dir.close();
 
         // self.generateCallbackStructs(out_dir, "callback_structs.zig");
-        // self.generateConsts(out_dir, "consts.zig");
-        // self.generateEnums(out_dir, "enums.zig");
         // self.generateInterfaces(out_dir, "interfaces.zig");
         // self.generateStructs(out_dir, "structs.zig");
         try self.generateTypedefs(out_dir, "typedefs.zig");
         try self.generateEnums(out_dir, "enums.zig");
+        try self.generateConsts(out_dir, "consts.zig");
     }
 
     fn generateTypedefs(self: *Self, dir: std.fs.Dir, file_name: []const u8) !void {
@@ -180,11 +180,39 @@ const Generator = struct {
     }
 
     fn writeEnum(writer: anytype, enum_def: Enum, l: usize) !void {
-        _ = try format(writer, "const {s} = enum(c_int) {{\n", .{ enum_def.enumname }, l);
+        try format(writer, "const {s} = enum(c_int) {{\n", .{ enum_def.enumname }, l);
         for (enum_def.values) |value| {
-            _ = try format(writer, "{s} = {s},\n", .{ value.name, value.value }, l + 1);
+            try format(writer, "{s} = {s},\n", .{ value.name, value.value }, l + 1);
         }
         _ = try writer.write("};\n");
+    }
+
+    fn generateConsts(self: *Self, dir: std.fs.Dir, file_name: []const u8) !void {
+        var file = try createFileWithHeader(dir, file_name);
+        defer file.close();
+
+        var writer = file.writer();
+        for (self.interface.consts) |const_def| {
+            try writeConst(writer, const_def, 0);
+        }
+    }
+
+    fn writeConst(writer: anytype, const_def: Const, l: usize) !void {
+        try format(writer, "const {s}: ", .{ const_def.constname }, l);
+        try writeType(writer, const_def.consttype);
+        const v = const_def.constval;
+        const n = const_def.constname;
+        const constval = if (false) ""
+            else if (v.len >= 3 and pEql(v[v.len-3..], "ull")) v[0..v.len-3]
+            else if (eql(u8, "k_SteamItemInstanceIDInvalid", n)) "~@intCast(u64, 0)"
+            else if (eql(u8, "k_nSteamNetworkingSend_UnreliableNoNagle", n)) "t.k_nSteamNetworkingSend_Unreliable | t.k_nSteamNetworkingSend_NoNagle"
+            else if (eql(u8, "k_nSteamNetworkingSend_UnreliableNoDelay", n)) "t.k_nSteamNetworkingSend_Unreliable | t.k_nSteamNetworkingSend_NoDelay | t.k_nSteamNetworkingSend_NoNagle"
+            else if (eql(u8, "k_nSteamNetworkingSend_ReliableNoNagle", n)) "t.k_nSteamNetworkingSend_Reliable | t.k_nSteamNetworkingSend_NoNagle"
+            else if (eql(u8, "k_SteamDatagramPOPID_dev", n)) "('d' << 16) | ('e' << 8) | 'v'"
+            else if (eql(u8, "MASTERSERVERUPDATERPORT_USEGAMESOCKETSHARE", n)) "t.STEAMGAMESERVER_QUERY_PORT_SHARED"
+            else v
+        ;
+        try format(writer, " = {s};\n", .{ constval }, 0);
     }
 
     fn createFileWithHeader(dir: std.fs.Dir, file_name: []const u8) !std.fs.File {
