@@ -194,6 +194,7 @@ const Generator = struct {
     fn writeEnum(writer: anytype, enum_def: Enum, l: usize) !void {
         try format(writer, "pub const {s} = enum(c_int) {{\n", .{ enum_def.enumname }, l);
         for (enum_def.values) |value| {
+            if (eql(u8, "k_EWorkshopFileTypeFirst", value.name)) continue;
             try format(writer, "{s} = {s},\n", .{ value.name, value.value }, l + 1);
         }
         try format(writer, "}};\n", .{}, l);
@@ -273,6 +274,8 @@ const Generator = struct {
     }
 
     fn writeStruct(writer: anytype, struct_def: Struct, l: usize) !void {
+        if (eql(u8, "SteamInputActionEvent_t", struct_def.@"struct")) return;
+
         try format(writer, "pub const {s} = extern struct {{\n", .{ struct_def.@"struct" }, l);
         for (struct_def.fields) |field| {
             try writeField(writer, field, l+1);
@@ -281,12 +284,12 @@ const Generator = struct {
             try writeConst(writer, const_def, l+1);
         }
         for (struct_def.methods orelse &[_]Method{}) |method| {
-            try writeMethod(writer, method, l+1);
+            try writeMethodNotImplemented(writer, method, struct_def.@"struct", l+1);
         }
         try format(writer, "}};\n", .{}, l);
     }
 
-    fn writeMethod(writer: anytype, method: Method, l: usize) !void {
+    fn writeMethodNotImplemented(writer: anytype, method: Method, struct_name: []const u8, l: usize) !void {
         const m = method.methodname;
         const name = if (false) ""
             else if (eql(u8, "operator<", m)) "IsLessThan"
@@ -294,18 +297,30 @@ const Generator = struct {
             else if (eql(u8, "operator==", m)) "IsEqualTo"
             else m
         ;
-        try format(writer, "pub fn {s}(", .{ name }, l);
+        try format(writer, "pub const {s} = t.getImplFn(\"{s}\", \"{s}\", fn(", .{ name, struct_name, name }, l);
         for (method.params) |param, i| {
-            try writeParam(writer, param, l+1);
+            try writeType(writer, param.paramtype);
+            if (i < method.params.len-1) {
+                _ = try writer.write(", ");
+            }
+        }
+        _ = try writer.write(") callconv(.C) ");
+        try writeType(writer, method.returntype);
+        _ = try writer.write(") orelse (struct {\n");
+
+        try format(writer, "fn noImpl(", .{}, l+1);
+        for (method.params) |param, i| {
+            try writeParam(writer, param, l+2);
             if (i < method.params.len-1) {
                 try format(writer, ", ", .{}, 0);
             }
         }
-        try format(writer, ") callconv(.C) ", .{}, 0);
+        _ = try writer.write(") callconv(.C) ");
         try writeType(writer, method.returntype);
         try format(writer, " {{\n", .{}, 0);
-        try writeFnBodyNotImplemented(writer, method, l+1);
-        try format(writer, "}}\n", .{}, l);
+        try writeFnBodyNotImplemented(writer, method, l+2);
+        try format(writer, "}}\n", .{}, l+1);
+        try format(writer, "}}).noImpl;\n", .{}, l);
     }
 
     fn writeParam(writer: anytype, param: Param, l: usize) !void {
@@ -372,22 +387,30 @@ const Generator = struct {
         for (interface.methods) |method| {
             var flat_method = method;
             flat_method.methodname = method.methodname_flat[skip_len..];
-            try writeMethod(writer, flat_method, l+1);
+            try writeMethodNotImplemented(writer, flat_method, interface.classname, l+1);
         }
         try format(writer, "}};\n", .{}, l);
 
         for (interface.accessors orelse &[_]Accessor{}) |accessor| {
-            var returntype: [128]u8 = undefined;
-            std.mem.copy(u8, returntype[0..], interface.classname);
-            std.mem.copy(u8, returntype[interface.classname.len..], " *");
-            var method = Method{
-                .methodname = accessor.name_flat,
-                .methodname_flat = accessor.name_flat,
-                .params = &[_]Param{},
-                .returntype = returntype[0..interface.classname.len+2]
-            };
-            try writeMethod(writer, method, l);
+            try writeAccessor(writer, accessor, interface, l);
         }
+    }
+
+    fn writeAccessor(writer: anytype, accessor: Accessor, interface: Interface, l: usize) !void {
+        var returntype: [128]u8 = undefined;
+        std.mem.copy(u8, returntype[0..], interface.classname);
+        std.mem.copy(u8, returntype[interface.classname.len..], " *");
+        const skip_len = "SteamAPI_".len + accessor.name.len + 1;
+        var method_name = accessor.name_flat[skip_len..];
+        var method = Method{
+            .methodname = method_name,
+            .methodname_flat = accessor.name_flat,
+            .params = &[_]Param{},
+            .returntype = returntype[0..interface.classname.len+2]
+        };
+        try format(writer, "const {s} = struct {{\n", .{ accessor.name }, l);
+        try writeMethodNotImplemented(writer, method, accessor.name, l+1);        
+        try format(writer, "}};\n", .{}, l);
     }
 
     fn createFileWithHeader(dir: std.fs.Dir, file_name: []const u8) !std.fs.File {
@@ -442,11 +465,14 @@ const Generator = struct {
             type_name.* = type_name.*[0..idx];
         }
 
+        const void_ptr = (std.mem.indexOf(u8, type_name.*, "void") orelse 10000) < 10000;
+
         while (t.len > 0) {
             if (last(t) == '*' or last(t) == '&') {
                 // remove last * or &
                 t = t[0..t.len-1];
-                _ = try writer.write("[*c]");
+                const ptr = if (void_ptr) "?*" else "[*c]";
+                _ = try writer.write(ptr);
             } else if (last(t) == ' ') {
                 t = t[0..t.len-1];
             } else if (pEql(t[t.len-c_len..], "const")) {
@@ -490,7 +516,7 @@ const Generator = struct {
 
         t = t["void (*)(".len..t.len-1];
 
-        _ = try writer.write("fn(");
+        _ = try writer.write("?fn(");
 
         var args = std.mem.count(u8, t, ",") + 1;
         while (args > 0) : (args -= 1) {

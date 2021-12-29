@@ -511,7 +511,6 @@ pub const ERemoteStoragePublishedFileVisibility = enum(c_int) {
     k_ERemoteStoragePublishedFileVisibilityUnlisted = 3,
 };
 pub const EWorkshopFileType = enum(c_int) {
-    k_EWorkshopFileTypeFirst = 0,
     k_EWorkshopFileTypeCommunity = 0,
     k_EWorkshopFileTypeMicrotransaction = 1,
     k_EWorkshopFileTypeCollection = 2,
