@@ -110,7 +110,7 @@ const Generator = struct {
     allocator: std.mem.Allocator,
 
     const Self = @This();
-    const common_header = "const t = @import(\"../types.zig\")\n";
+    const common_header = "const t = @import(\"../types.zig\");\n";
 
     fn init(allocator: std.mem.Allocator, in_file_path: []const u8, out_dir_path: []const u8) !Self {
         var file_content: []u8 = init: {
@@ -148,28 +148,63 @@ const Generator = struct {
         // self.generateInterfaces(out_dir, "interfaces.zig");
         // self.generateStructs(out_dir, "structs.zig");
         try self.generateTypedefs(out_dir, "typedefs.zig");
+        try self.generateEnums(out_dir, "enums.zig");
     }
 
     fn generateTypedefs(self: *Self, dir: std.fs.Dir, file_name: []const u8) !void {
-        var file = try createFile(dir, file_name);
+        var file = try createFileWithHeader(dir, file_name);
+        defer file.close();
+
         var writer = file.writer();
-        file.write(common_header);
         for (self.interface.typedefs) |typedef| {
-            _ = try file.write("const ");
-            _ = try file.write(typedef.typedef);
-            _ = try file.write(" = ");
-            writeType(writer, typedef.@"type") catch |err| {
-                std.log.err("Failed to write type {s}: {any}", .{ typedef.@"type", err });
-            };
-            _ = try file.write(";\n");
+            try writeTypedef(writer, typedef, 0);
         }
     }
 
-    fn createFile(dir: std.fs.Dir, file_name: []const u8) !std.fs.File {
-        return dir.createFile(file_name, .{}) catch |err| blk: {
-            std.log.err("Failed to create file {s}: {any}", .{ file_name, err });
-            break :blk err;
+    fn writeTypedef(writer: anytype, typedef: Typedef, l: usize) !void {
+        try format(writer, "const {s} = ", .{ typedef.typedef }, l);
+        writeType(writer, typedef.@"type") catch |err| {
+            std.log.err("Failed to write type {s}: {any}", .{ typedef.@"type", err });
         };
+        _ = try writer.write(";\n");
+    }
+
+    fn generateEnums(self: *Self, dir: std.fs.Dir, file_name: []const u8) !void {
+        var file = try createFileWithHeader(dir, file_name);
+        defer file.close();
+
+        var writer = file.writer();
+        for (self.interface.enums) |enum_def| {
+            try writeEnum(writer, enum_def, 0);
+        }
+    }
+
+    fn writeEnum(writer: anytype, enum_def: Enum, l: usize) !void {
+        _ = try format(writer, "const {s} = enum(c_int) {{\n", .{ enum_def.enumname }, l);
+        for (enum_def.values) |value| {
+            _ = try format(writer, "{s} = {s},\n", .{ value.name, value.value }, l + 1);
+        }
+        _ = try writer.write("};\n");
+    }
+
+    fn createFileWithHeader(dir: std.fs.Dir, file_name: []const u8) !std.fs.File {
+        var file = dir.createFile(file_name, .{}) catch |err| {
+            std.log.err("Failed to create file {s}: {any}", .{ file_name, err });
+            return err;
+        };
+
+        _ = try file.write(common_header);
+        return file;
+    }
+
+    const formatNoIndent = std.fmt.format;
+
+    fn format(writer: anytype, comptime fmt: []const u8, args: anytype, indentLevel: usize) !void {
+        var i = indentLevel;
+        while (i > 0) : (i -= 1) {
+            _ = try writer.write("    ");
+        }
+        try formatNoIndent(writer, fmt, args);
     }
 
     const WriteError = error {
