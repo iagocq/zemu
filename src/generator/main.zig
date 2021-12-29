@@ -144,11 +144,11 @@ const Generator = struct {
         defer out_dir.close();
 
         // self.generateInterfaces(out_dir, "interfaces.zig");
-        // self.generateStructs(out_dir, "structs.zig");
         try self.generateTypedefs(out_dir, "typedefs.zig");
         try self.generateEnums(out_dir, "enums.zig");
         try self.generateConsts(out_dir, "consts.zig");
         try self.generateCallbackStructs(out_dir, "callback_structs.zig");
+        try self.generateStructs(out_dir, "structs.zig");
     }
 
     fn generateTypedefs(self: *Self, dir: std.fs.Dir, file_name: []const u8) !void {
@@ -246,6 +246,78 @@ const Generator = struct {
         try format(writer, "{s}{s}: ", .{ modifier, field.fieldname }, l);
         try writeType(writer, field.fieldtype);
         try format(writer, ",\n", .{}, 0);
+    }
+
+    fn generateStructs(self: *Self, dir: std.fs.Dir, file_name: []const u8) !void {
+        var file = try createFileWithHeader(dir, file_name);
+        defer file.close();
+
+        var writer = file.writer();
+
+        try format(writer, "const p = @import(\"std\").debug.print;\n", .{}, 0);
+        for (self.interface.structs) |struct_def| {
+            try writeStruct(writer, struct_def, 0);
+        }
+    }
+
+    fn writeStruct(writer: anytype, struct_def: Struct, l: usize) !void {
+        try format(writer, "pub const {s} = struct {{\n", .{ struct_def.@"struct" }, l);
+        for (struct_def.fields) |field| {
+            try writeField(writer, field, l+1);
+        }
+        for (struct_def.consts orelse &[_]Const{}) |const_def| {
+            try writeConst(writer, const_def, l+1);
+        }
+        for (struct_def.methods orelse &[_]Method{}) |method| {
+            try writeMethod(writer, method, l+1);
+        }
+        try format(writer, "}};\n", .{}, l);
+    }
+
+    fn writeMethod(writer: anytype, method: Method, l: usize) !void {
+        const m = method.methodname;
+        const name = if (false) ""
+            else if (eql(u8, "operator<", m)) "IsLessThan"
+            else if (eql(u8, "operator=", m)) "Assign"
+            else if (eql(u8, "operator==", m)) "IsEqualTo"
+            else m
+        ;
+        try format(writer, "fn {s}(", .{ name }, l);
+        for (method.params) |param, i| {
+            try writeParam(writer, param, l+1);
+            if (i < method.params.len-1) {
+                try format(writer, ", ", .{}, 0);
+            }
+        }
+        try format(writer, ") callconv(.C) ", .{}, 0);
+        try writeType(writer, method.returntype);
+        try format(writer, " {{\n", .{}, 0);
+        try writeFnBodyNotImplemented(writer, method, l+1);
+        try format(writer, "}}\n", .{}, l);
+    }
+
+    fn writeParam(writer: anytype, param: Param, l: usize) !void {
+        _ = l;
+        try format(writer, "{s}: ", .{ param.paramname }, 0);
+        try writeType(writer, param.paramtype);
+    }
+
+    fn writeFnBodyNotImplemented(writer: anytype, method: Method, l: usize) !void {
+        const colon = if (method.params.len > 0) ":" else "";
+
+        try format(writer, "p(\"NOT IMPLEMENTED {s}{s}\\n", .{ method.methodname_flat, colon }, l);
+        for (method.params) |param| {
+            try format(writer, "\\t- {s} = {{any}}\\n", .{ param.paramname }, 0);
+        }
+        try format(writer, "\\n\", .{{ ", .{}, 0);
+        for (method.params) |param, i| {
+            try format(writer, "{s}", .{ param.paramname }, 0);
+            if (i < method.params.len-1) {
+                try format(writer, ", ", .{}, 0);
+            }
+        }
+        try format(writer, " }});\n", .{}, 0);
+        try format(writer, "return undefined;\n", .{}, l);
     }
 
     fn createFileWithHeader(dir: std.fs.Dir, file_name: []const u8) !std.fs.File {
