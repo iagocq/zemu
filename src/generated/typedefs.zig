@@ -1,4 +1,4 @@
-const t = @import("../types.zig");
+const t = @import("../steam_api.zig");
 pub const uint8 = u8;
 pub const int8 = i8;
 pub const int16 = i16;

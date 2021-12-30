@@ -1,4 +1,4 @@
-const t = @import("../types.zig");
+const t = @import("../steam_api.zig");
 pub const SteamServersConnected_t = extern struct {
     pub const callback_id = 101;
 };
@@ -21,9 +21,10 @@ pub const ClientGameServerDeny_t = extern struct {
 };
 pub const IPCFailure_t = extern struct {
     pub const callback_id = 117;
-    pub const EFailureType = enum(c_int) {
-        k_EFailureFlushedCallbackQueue = 0,
-        k_EFailurePipeFail = 1,
+    pub const EFailureType = extern struct {
+        v: c_int,
+        pub const k_EFailureFlushedCallbackQueue = 0;
+        pub const k_EFailurePipeFail = 1;
     };
     m_eFailureType: t.uint8,
 };
@@ -314,10 +315,11 @@ pub const RequestPlayersForGameProgressCallback_t = extern struct {
 };
 pub const RequestPlayersForGameResultCallback_t = extern struct {
     pub const callback_id = 5212;
-    pub const PlayerAcceptState_t = enum(c_int) {
-        k_EStateUnknown = 0,
-        k_EStatePlayerAccepted = 1,
-        k_EStatePlayerDeclined = 2,
+    pub const PlayerAcceptState_t = extern struct {
+        v: c_int,
+        pub const k_EStateUnknown = 0;
+        pub const k_EStatePlayerAccepted = 1;
+        pub const k_EStatePlayerDeclined = 2;
     };
     m_eResult: t.EResult,
     m_ullSearchID: t.uint64,

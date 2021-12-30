@@ -111,7 +111,7 @@ const Generator = struct {
     allocator: std.mem.Allocator,
 
     const Self = @This();
-    const common_header = "const t = @import(\"../types.zig\");\n";
+    const common_header = "const t = @import(\"../steam_api.zig\");\n";
 
     pub fn init(allocator: std.mem.Allocator, in_file_path: []const u8, out_dir_path: []const u8) !Self {
         var file_content: []u8 = init: {
@@ -175,7 +175,7 @@ const Generator = struct {
 
     fn writeTypedef(writer: anytype, typedef: Typedef, l: usize) !void {
         try format(writer, "pub const {s} = ", .{ typedef.typedef }, l);
-        writeType(writer, typedef.@"type") catch |err| {
+        writeType(writer, typedef.@"type", false) catch |err| {
             std.log.err("Failed to write type {s}: {any}", .{ typedef.@"type", err });
         };
         _ = try writer.write(";\n");
@@ -192,10 +192,10 @@ const Generator = struct {
     }
 
     fn writeEnum(writer: anytype, enum_def: Enum, l: usize) !void {
-        try format(writer, "pub const {s} = enum(c_int) {{\n", .{ enum_def.enumname }, l);
+        try format(writer, "pub const {s} = extern struct {{\n", .{ enum_def.enumname }, l);
+        try format(writer, "v: c_int,\n", .{}, l+1);
         for (enum_def.values) |value| {
-            if (eql(u8, "k_EWorkshopFileTypeFirst", value.name)) continue;
-            try format(writer, "{s} = {s},\n", .{ value.name, value.value }, l + 1);
+            try format(writer, "pub const {s} = {s};\n", .{ value.name, value.value }, l+1);
         }
         try format(writer, "}};\n", .{}, l);
     }
@@ -212,9 +212,13 @@ const Generator = struct {
 
     fn writeConst(writer: anytype, const_def: Const, l: usize) !void {
         try format(writer, "pub const {s}: ", .{ const_def.constname }, l);
-        try writeType(writer, const_def.consttype);
         const v = const_def.constval;
         const n = const_def.constname;
+        if (eql(u8, "HSERVERQUERY_INVALID", n)) {
+            try writeType(writer, "unsigned int", false);
+        } else {
+            try writeType(writer, const_def.consttype, false);
+        }
         const constval = if (false) ""
             else if (v.len >= 3 and pEql(v[v.len-3..], "ull")) v[0..v.len-3]
             else if (eql(u8, "k_SteamItemInstanceIDInvalid", n)) "~@intCast(u64, 0)"
@@ -257,7 +261,7 @@ const Generator = struct {
         // const modifier = if (field.private orelse false) "" else "pub ";
         const modifier = "";
         try format(writer, "{s}{s}: ", .{ modifier, field.fieldname }, l);
-        try writeType(writer, field.fieldtype);
+        try writeType(writer, field.fieldtype, false);
         try format(writer, ",\n", .{}, 0);
     }
 
@@ -287,6 +291,7 @@ const Generator = struct {
             try writeMethodNotImplemented(writer, method, struct_def.@"struct", l+1);
         }
         try format(writer, "}};\n", .{}, l);
+        try format(writer, "comptime {{ _ = {s}; }}\n", .{ struct_def.@"struct" }, l);
     }
 
     fn writeMethodNotImplemented(writer: anytype, method: Method, struct_name: []const u8, l: usize) !void {
@@ -299,13 +304,13 @@ const Generator = struct {
         ;
         try format(writer, "pub const {s} = t.getImplFn(\"{s}\", \"{s}\", fn(", .{ name, struct_name, name }, l);
         for (method.params) |param, i| {
-            try writeType(writer, param.paramtype);
+            try writeType(writer, param.paramtype, false);
             if (i < method.params.len-1) {
                 _ = try writer.write(", ");
             }
         }
         _ = try writer.write(") callconv(.C) ");
-        try writeType(writer, method.returntype);
+        try writeType(writer, method.returntype, true);
         _ = try writer.write(") orelse (struct {\n");
 
         try format(writer, "fn noImpl(", .{}, l+1);
@@ -316,18 +321,19 @@ const Generator = struct {
             }
         }
         _ = try writer.write(") callconv(.C) ");
-        try writeType(writer, method.returntype);
+        try writeType(writer, method.returntype, true);
         try format(writer, " {{\n", .{}, 0);
         try writeFnBodyNotImplemented(writer, method, l+2);
         try format(writer, "}}\n", .{}, l+1);
         try format(writer, "}}).noImpl;\n", .{}, l);
+        try format(writer, "comptime {{ @export({s}, .{{ .name = \"{s}\", .linkage = .Strong }}); }}\n", .{ name, method.methodname_flat }, l);
     }
 
     fn writeParam(writer: anytype, param: Param, l: usize) !void {
         _ = l;
         try writeParamName(writer, param, l);
         _ = try writer.write(": ");
-        try writeType(writer, param.paramtype);
+        try writeType(writer, param.paramtype, false);
     }
 
     fn writeParamName(writer: anytype, param: Param, l: usize) !void {
@@ -371,10 +377,11 @@ const Generator = struct {
     }
 
     fn writeInterface(writer: anytype, interface: Interface, l: usize) !void {
-        try format(writer, "pub const {s} = struct {{\n", .{ interface.classname }, l);
+        try format(writer, "pub const {s} = extern struct {{\n", .{ interface.classname }, l);
         for (interface.fields) |field| {
             try writeField(writer, field, l+1);
         }
+        try format(writer, "_: u8 = 1,\n", .{}, l+1);
 
         if (interface.version_string) |version| {
             try format(writer, "pub const version = \"{s}\";\n", .{ version }, l+1);
@@ -390,6 +397,7 @@ const Generator = struct {
             try writeMethodNotImplemented(writer, flat_method, interface.classname, l+1);
         }
         try format(writer, "}};\n", .{}, l);
+        try format(writer, "comptime {{ _ = {s}; }}\n", .{ interface.classname }, l);
 
         for (interface.accessors orelse &[_]Accessor{}) |accessor| {
             try writeAccessor(writer, accessor, interface, l);
@@ -411,6 +419,7 @@ const Generator = struct {
         try format(writer, "const {s} = struct {{\n", .{ accessor.name }, l);
         try writeMethodNotImplemented(writer, method, accessor.name, l+1);        
         try format(writer, "}};\n", .{}, l);
+        try format(writer, "comptime {{ _ = {s}; }}\n", .{ accessor.name }, l);
     }
 
     fn createFileWithHeader(dir: std.fs.Dir, file_name: []const u8) !std.fs.File {
@@ -438,12 +447,14 @@ const Generator = struct {
         InvalidFunction,
     } || std.os.WriteError;
 
-    fn writePointer(writer: anytype, type_name: *[]const u8) WriteError!void {
+    fn writePointer(writer: anytype, type_name: *[]const u8, return_type: bool) WriteError!bool {
+        _ = return_type;
+
         type_name.* = std.mem.trim(u8, type_name.*, " ");
         var t = type_name.*;
 
         if (t.len == 0 or !(last(t) == '*' or last(t) == '&')) {
-            return;
+            return false;
         }
 
         const start_const = pEql(t, "const ");
@@ -488,6 +499,8 @@ const Generator = struct {
         if (last(type_name.*) == ' ') {
             type_name.* = type_name.*[0..type_name.*.len-1];
         }
+
+        return true;
     }
 
     fn writeArray(writer: anytype, type_name: *[]const u8) WriteError!void {
@@ -521,7 +534,7 @@ const Generator = struct {
         var args = std.mem.count(u8, t, ",") + 1;
         while (args > 0) : (args -= 1) {
             var end_idx = std.mem.indexOfScalar(u8, t, ',') orelse t.len;
-            try writeType(writer, t[0..end_idx]);
+            try writeType(writer, t[0..end_idx], false);
 
             end_idx = if (args != 1) end_idx + 1 else end_idx;
             t = t[end_idx..];
@@ -533,12 +546,12 @@ const Generator = struct {
         _ = try writer.write(") callconv(.C) void");
     }
 
-    fn writeType(writer: anytype, type_name: []const u8) WriteError!void {
+    fn writeType(writer: anytype, type_name: []const u8, return_type: bool) WriteError!void {
         var t = type_name;
         t = std.mem.trim(u8, t, " ");
 
         try writeArray(writer, &t);
-        try writePointer(writer, &t);
+        const is_ptr = try writePointer(writer, &t, return_type);
 
         const zig_type_name = if (false) ""
             else if (pEql(t, "signed char")) "i8"
@@ -556,7 +569,9 @@ const Generator = struct {
             else if (pEql(t, "void (*)")) blk: {
                 try writeFn(writer, &t);
                 break :blk "";
-            } else if (pEql(t, "void")) "anyopaque"
+            }
+            else if (pEql(t, "void") and (!return_type or return_type and is_ptr)) "anyopaque"
+            else if (pEql(t, "void")) "void"
             else if (std.mem.indexOf(u8, t, "::")) |_| blk: {
                 _ = try writer.write("t.");
                 while (std.mem.indexOf(u8, t, "::")) |idx| {
@@ -565,7 +580,8 @@ const Generator = struct {
                     t = t[idx+2..];
                 }
                 break :blk t;
-            } else blk: {
+            }
+            else blk: {
                 _ = try writer.write("t.");
                 _ = try writer.write(t);
                 break :blk "";

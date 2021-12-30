@@ -1,7 +1,7 @@
 const std = @import("std");
 const builtin = @import("builtin");
-const types = @import("types.zig");
+const steam_api = @import("steam_api.zig");
 
 comptime {
-    _ = types;
+    _ = steam_api;
 }

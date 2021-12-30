@@ -1,4 +1,4 @@
-const t = @import("../types.zig");
+const t = @import("../steam_api.zig");
 pub const k_uAppIdInvalid: t.AppId_t = 0x0;
 pub const k_uDepotIdInvalid: t.DepotId_t = 0x0;
 pub const k_uAPICallInvalid: t.SteamAPICall_t = 0x0;
@@ -19,7 +19,7 @@ pub const k_cbMaxGameServerGameDescription: i32 = 64;
 pub const k_cbMaxGameServerName: i32 = 64;
 pub const k_cbMaxGameServerTags: i32 = 128;
 pub const k_cbMaxGameServerGameData: i32 = 2048;
-pub const HSERVERQUERY_INVALID: i32 = 0xffffffff;
+pub const HSERVERQUERY_INVALID: u32 = 0xffffffff;
 pub const k_unFavoriteFlagNone: t.uint32 = 0x00;
 pub const k_unFavoriteFlagFavorite: t.uint32 = 0x01;
 pub const k_unFavoriteFlagHistory: t.uint32 = 0x02;
