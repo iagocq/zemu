@@ -1,4 +1,5 @@
 const t = @import("../steam_api.zig");
+const p0 = t.p;
 pub const k_uAppIdInvalid: t.AppId_t = 0x0;
 pub const k_uDepotIdInvalid: t.DepotId_t = 0x0;
 pub const k_uAPICallInvalid: t.SteamAPICall_t = 0x0;

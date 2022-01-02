@@ -111,7 +111,7 @@ const Generator = struct {
     allocator: std.mem.Allocator,
 
     const Self = @This();
-    const common_header = "const t = @import(\"../steam_api.zig\");\n";
+    const common_header = "const t = @import(\"../steam_api.zig\");\nconst p0 = t.p;\n";
 
     pub fn init(allocator: std.mem.Allocator, in_file_path: []const u8, out_dir_path: []const u8) !Self {
         var file_content: []u8 = init: {
@@ -178,7 +178,7 @@ const Generator = struct {
         writeType(writer, typedef.@"type", false) catch |err| {
             std.log.err("Failed to write type {s}: {any}", .{ typedef.@"type", err });
         };
-        _ = try writer.write(";\n");
+        try write(writer, ";\n");
     }
 
     fn generateEnums(self: *Self, dir: std.fs.Dir, file_name: []const u8) !void {
@@ -271,7 +271,6 @@ const Generator = struct {
 
         var writer = file.writer();
 
-        try format(writer, "const p = @import(\"std\").debug.print;\n", .{}, 0);
         for (self.interface.structs) |struct_def| {
             try writeStruct(writer, struct_def, 0);
         }
@@ -281,6 +280,7 @@ const Generator = struct {
         if (eql(u8, "SteamInputActionEvent_t", struct_def.@"struct")) return;
 
         try format(writer, "pub const {s} = extern struct {{\n", .{ struct_def.@"struct" }, l);
+        try writeCommonStructFields(writer, struct_def.@"struct", l+1);
         for (struct_def.fields) |field| {
             try writeField(writer, field, l+1);
         }
@@ -291,48 +291,41 @@ const Generator = struct {
             try writeMethodNotImplemented(writer, method, struct_def.@"struct", l+1);
         }
         try format(writer, "}};\n", .{}, l);
-        try format(writer, "comptime {{ _ = {s}; }}\n", .{ struct_def.@"struct" }, l);
+    }
+
+    fn writeCommonStructFields(writer: anytype, struct_name: []const u8, l: usize) !void {
+        try format(writer, "const S = @This();\n", .{ }, l);
+        try format(writer, "const p{d} = p{d} ++ [_][]const u8{{\"{s}\"}};\n", .{ l, l-1, struct_name }, l);
     }
 
     fn writeMethodNotImplemented(writer: anytype, method: Method, struct_name: []const u8, l: usize) !void {
-        const m = method.methodname;
-        const name = if (false) ""
-            else if (eql(u8, "operator<", m)) "IsLessThan"
-            else if (eql(u8, "operator=", m)) "Assign"
-            else if (eql(u8, "operator==", m)) "IsEqualTo"
-            else m
-        ;
-        try format(writer, "pub const {s} = t.getImplFn(\"{s}\", \"{s}\", fn(", .{ name, struct_name, name }, l);
-        for (method.params) |param, i| {
-            try writeType(writer, param.paramtype, false);
-            if (i < method.params.len-1) {
-                _ = try writer.write(", ");
-            }
-        }
-        _ = try writer.write(") callconv(.C) ");
-        try writeType(writer, method.returntype, true);
-        _ = try writer.write(") orelse (struct {\n");
-
-        try format(writer, "fn noImpl(", .{}, l+1);
-        for (method.params) |param, i| {
+        const m = method.methodname_flat;
+        const name = m["SteamAPI".len + struct_name.len + 2..];
+        try format(writer, "pub fn {s}(", .{ name }, l);
+        for (method.params) |param| {
             try writeParam(writer, param, l+2);
-            if (i < method.params.len-1) {
-                try format(writer, ", ", .{}, 0);
-            }
+            try write(writer, ", ");
         }
-        _ = try writer.write(") callconv(.C) ");
+        try write(writer, ") callconv(.C) ");
         try writeType(writer, method.returntype, true);
-        try format(writer, " {{\n", .{}, 0);
-        try writeFnBodyNotImplemented(writer, method, l+2);
-        try format(writer, "}}\n", .{}, l+1);
-        try format(writer, "}}).noImpl;\n", .{}, l);
-        try format(writer, "comptime {{ @export({s}, .{{ .name = \"{s}\", .linkage = .Strong }}); }}\n", .{ name, method.methodname_flat }, l);
+        try write(writer, " {\n");
+        try format(writer, "return t.callImplFn(&(p{d} ++ [_][]const u8{{\"{s}\"}}), .{{ ", .{ l, name }, l+1);
+        for (method.params) |param| {
+            try writeParamName(writer, param, 0);
+            try write(writer, ", ");
+        }
+        try write(writer, "}, .{ ");
+        for (method.params) |param| {
+            try format(writer, "\"{s}\", ", .{ param.paramname }, 0);
+        }
+        try format(writer, "}}, @TypeOf(S.{s}));\n", .{ name }, 0);
+        try format(writer, "}}\n", .{}, l);
     }
 
     fn writeParam(writer: anytype, param: Param, l: usize) !void {
         _ = l;
         try writeParamName(writer, param, l);
-        _ = try writer.write(": ");
+        try write(writer, ": ");
         try writeType(writer, param.paramtype, false);
     }
 
@@ -340,28 +333,10 @@ const Generator = struct {
         _ = l;
         const name = param.paramname;
         if (eql(u8, name, "type")) {
-            _ = try writer.write("@\"type\"");
+            try write(writer, "@\"type\"");
         } else {
-            _ = try writer.write(name);
+            try write(writer, name);
         }
-    }
-
-    fn writeFnBodyNotImplemented(writer: anytype, method: Method, l: usize) !void {
-        const colon = if (method.params.len > 0) ":" else "";
-
-        try format(writer, "p(\"NOT IMPLEMENTED {s}{s}\\n", .{ method.methodname_flat, colon }, l);
-        for (method.params) |param| {
-            try format(writer, "\\t- {s} = {{any}}\\n", .{ param.paramname }, 0);
-        }
-        try format(writer, "\\n\", .{{ ", .{}, 0);
-        for (method.params) |param, i| {
-            try writeParamName(writer, param, 0);
-            if (i < method.params.len-1) {
-                try format(writer, ", ", .{}, 0);
-            }
-        }
-        try format(writer, " }});\n", .{}, 0);
-        try format(writer, "return undefined;\n", .{}, l);
     }
 
     fn generateInterfaces(self: *Self, dir: std.fs.Dir, file_name: []const u8) !void {
@@ -370,7 +345,6 @@ const Generator = struct {
 
         var writer = file.writer();
 
-        try format(writer, "const p = @import(\"std\").debug.print;\n", .{}, 0);
         for (self.interface.interfaces) |interface| {
             try writeInterface(writer, interface, 0);
         }
@@ -378,6 +352,7 @@ const Generator = struct {
 
     fn writeInterface(writer: anytype, interface: Interface, l: usize) !void {
         try format(writer, "pub const {s} = extern struct {{\n", .{ interface.classname }, l);
+        try writeCommonStructFields(writer, interface.classname, l+1);
         for (interface.fields) |field| {
             try writeField(writer, field, l+1);
         }
@@ -390,14 +365,10 @@ const Generator = struct {
         for (interface.enums orelse &[_]Enum{}) |enum_def| {
             try writeEnum(writer, enum_def, l+1);
         }
-        const skip_len = "SteamAPI_".len + interface.classname.len + 1;
         for (interface.methods) |method| {
-            var flat_method = method;
-            flat_method.methodname = method.methodname_flat[skip_len..];
-            try writeMethodNotImplemented(writer, flat_method, interface.classname, l+1);
+            try writeMethodNotImplemented(writer, method, interface.classname, l+1);
         }
         try format(writer, "}};\n", .{}, l);
-        try format(writer, "comptime {{ _ = {s}; }}\n", .{ interface.classname }, l);
 
         for (interface.accessors orelse &[_]Accessor{}) |accessor| {
             try writeAccessor(writer, accessor, interface, l);
@@ -408,18 +379,16 @@ const Generator = struct {
         var returntype: [128]u8 = undefined;
         std.mem.copy(u8, returntype[0..], interface.classname);
         std.mem.copy(u8, returntype[interface.classname.len..], " *");
-        const skip_len = "SteamAPI_".len + accessor.name.len + 1;
-        var method_name = accessor.name_flat[skip_len..];
         var method = Method{
-            .methodname = method_name,
+            .methodname = accessor.name_flat,
             .methodname_flat = accessor.name_flat,
             .params = &[_]Param{},
             .returntype = returntype[0..interface.classname.len+2]
         };
-        try format(writer, "const {s} = struct {{\n", .{ accessor.name }, l);
+        try format(writer, "pub const {s} = struct {{\n", .{ accessor.name }, l);
+        try writeCommonStructFields(writer, accessor.name, l+1);
         try writeMethodNotImplemented(writer, method, accessor.name, l+1);        
         try format(writer, "}};\n", .{}, l);
-        try format(writer, "comptime {{ _ = {s}; }}\n", .{ accessor.name }, l);
     }
 
     fn createFileWithHeader(dir: std.fs.Dir, file_name: []const u8) !std.fs.File {
@@ -434,10 +403,14 @@ const Generator = struct {
 
     const formatNoIndent = std.fmt.format;
 
+    fn write(writer: anytype, msg: []const u8) !void {
+        _ = try writer.write(msg);
+    }
+
     fn format(writer: anytype, comptime fmt: []const u8, args: anytype, indentLevel: usize) !void {
         var i = indentLevel;
         while (i > 0) : (i -= 1) {
-            _ = try writer.write("    ");
+            try write(writer, "    ");
         }
         try formatNoIndent(writer, fmt, args);
     }
@@ -483,17 +456,17 @@ const Generator = struct {
                 // remove last * or &
                 t = t[0..t.len-1];
                 const ptr = if (void_ptr) "?*" else "[*c]";
-                _ = try writer.write(ptr);
+                try write(writer, ptr);
             } else if (last(t) == ' ') {
                 t = t[0..t.len-1];
             } else if (pEql(t[t.len-c_len..], "const")) {
                 t = t[0..t.len-c_len];
-                _ = try writer.write("const ");
+                try write(writer, "const ");
             }
         }
 
         if (start_const) {
-            _ = try writer.write("const ");
+            try write(writer, "const ");
         }
 
         if (last(type_name.*) == ' ') {
@@ -515,7 +488,7 @@ const Generator = struct {
         t = t[start_idx..t.len];
         type_name.* = type_name.*[0..start_idx];
 
-        _ = try writer.write(t);
+        try write(writer, t);
     }
 
     fn writeFn(writer: anytype, type_name: *[]const u8) WriteError!void {
@@ -529,7 +502,7 @@ const Generator = struct {
 
         t = t["void (*)(".len..t.len-1];
 
-        _ = try writer.write("?fn(");
+        try write(writer, "?fn(");
 
         var args = std.mem.count(u8, t, ",") + 1;
         while (args > 0) : (args -= 1) {
@@ -540,10 +513,10 @@ const Generator = struct {
             t = t[end_idx..];
 
             const comma = if (args != 1) ", " else "";
-            _ = try writer.write(comma);
+            try write(writer, comma);
         }
 
-        _ = try writer.write(") callconv(.C) void");
+        try write(writer, ") callconv(.C) void");
     }
 
     fn writeType(writer: anytype, type_name: []const u8, return_type: bool) WriteError!void {
@@ -573,21 +546,21 @@ const Generator = struct {
             else if (pEql(t, "void") and (!return_type or return_type and is_ptr)) "anyopaque"
             else if (pEql(t, "void")) "void"
             else if (std.mem.indexOf(u8, t, "::")) |_| blk: {
-                _ = try writer.write("t.");
+                try write(writer, "t.");
                 while (std.mem.indexOf(u8, t, "::")) |idx| {
-                    _ = try writer.write(t[0..idx]);
-                    _ = try writer.write(".");
+                    try write(writer, t[0..idx]);
+                    try write(writer, ".");
                     t = t[idx+2..];
                 }
                 break :blk t;
             }
             else blk: {
-                _ = try writer.write("t.");
-                _ = try writer.write(t);
+                try write(writer, "t.");
+                try write(writer, t);
                 break :blk "";
             };
 
-        _ = try writer.write(zig_type_name);
+        try write(writer, zig_type_name);
     }
 };
 

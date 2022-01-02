@@ -1,4 +1,5 @@
 const t = @import("../steam_api.zig");
+const p0 = t.p;
 pub const SteamServersConnected_t = extern struct {
     pub const callback_id = 101;
 };

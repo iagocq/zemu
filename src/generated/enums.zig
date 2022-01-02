@@ -1,4 +1,5 @@
 const t = @import("../steam_api.zig");
+const p0 = t.p;
 pub const ESteamIPType = extern struct {
     v: c_int,
     pub const k_ESteamIPTypeIPv4 = 0;
