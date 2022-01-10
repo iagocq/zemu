@@ -291,6 +291,7 @@ const Generator = struct {
             try writeMethodNotImplemented(writer, method, struct_def.@"struct", l+1);
         }
         try format(writer, "}};\n", .{}, l);
+        try writeFieldAccess(writer, struct_def.@"struct", l);
     }
 
     fn writeCommonStructFields(writer: anytype, struct_name: []const u8, l: usize) !void {
@@ -320,6 +321,7 @@ const Generator = struct {
         }
         try format(writer, "}}, @TypeOf(S.{s}));\n", .{ name }, 0);
         try format(writer, "}}\n", .{}, l);
+        try format(writer, "comptime {{ @export({s}, .{{ .name = \"{s}\", .linkage = .Strong }}); }}\n", .{ name, m }, l);
     }
 
     fn writeParam(writer: anytype, param: Param, l: usize) !void {
@@ -369,6 +371,7 @@ const Generator = struct {
             try writeMethodNotImplemented(writer, method, interface.classname, l+1);
         }
         try format(writer, "}};\n", .{}, l);
+        try writeFieldAccess(writer, interface.classname, l);
 
         for (interface.accessors orelse &[_]Accessor{}) |accessor| {
             try writeAccessor(writer, accessor, interface, l);
@@ -389,6 +392,11 @@ const Generator = struct {
         try writeCommonStructFields(writer, accessor.name, l+1);
         try writeMethodNotImplemented(writer, method, accessor.name, l+1);        
         try format(writer, "}};\n", .{}, l);
+        try writeFieldAccess(writer, accessor.name, l);
+    }
+
+    fn writeFieldAccess(writer: anytype, field_name: []const u8, l: usize) !void {
+        try format(writer, "comptime {{ _ = {s}; }}\n", .{ field_name }, l);
     }
 
     fn createFileWithHeader(dir: std.fs.Dir, file_name: []const u8) !std.fs.File {

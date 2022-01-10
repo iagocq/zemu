@@ -1,108 +1,123 @@
 const std = @import("std");
 const t = @import("steam_api.zig");
-const log = std.log;
+const o = @import("options.zig");
 
 pub const ISteamClient = struct {
+    const l = std.log.scoped(.ISteamClient);
+
     pub fn CreateSteamPipe() t.HSteamPipe {
-        log.info("Hello from CreateSteamPipe", .{});
+        l.info("Hello from CreateSteamPipe", .{});
         return undefined;
     }
 };
 
+comptime {
+    @compileLog(o.OptionManager.getFileName(.AppID));
+}
+
 pub const SteamAPI = struct {
+    const l = std.log.scoped(.SteamAPI);
+
     pub fn Init() callconv(.C) bool {
-        log.info("Init", .{});
+        l.info("Init", .{});
         return true;
     }
 
     pub fn ReleaseCurrentThreadMemory() callconv(.C) void {
-        log.info("ReleaseCurrentThreadMemory", .{});
+        l.info("ReleaseCurrentThreadMemory", .{});
     }
 
     pub fn RestartAppIfNecessary(unOwnAppID: u32) callconv(.C) bool {
-        log.info("RestartAppIfNecessary", .{});
+        l.info("RestartAppIfNecessary", .{});
         _ = unOwnAppID;
         return false;
     }
 
     pub fn RunCallbacks() callconv(.C) void {
-        log.info("RunCallbacks", .{});
+        l.info("RunCallbacks", .{});
     }
 
     pub fn SetMiniDumpComment(pchMsg: [*c]const u8) callconv(.C) void {
-        log.info("SetMiniDumpComment", .{});
+        l.info("SetMiniDumpComment", .{});
         _ = pchMsg;
     }
 
     pub fn Shutdown() callconv(.C) void {
-        log.info("Shutdown", .{});
+        l.info("Shutdown", .{});
     }
 
     pub fn WriteMiniDump(uStructuredExceptionCode: u32, pvExceptionInfo: ?*anyopaque, uBuildID: u32) callconv(.C) void {
-        log.info("WriteMiniDump", .{});
+        l.info("WriteMiniDump", .{});
         _ = uStructuredExceptionCode;
         _ = pvExceptionInfo;
         _ = uBuildID;
     }
 
     pub fn RegisterCallback(pCallback: ?*anyopaque, iCallback: c_int) callconv(.C) void {
-        log.info("RegisterCallback", .{});
+        l.info("RegisterCallback", .{});
         _ = pCallback;
         _ = iCallback;
     }
 
     pub fn UnregisterCallback(pCallback: ?*anyopaque) callconv(.C) void {
-        log.info("UnregisterCallback", .{});
+        l.info("UnregisterCallback", .{});
         _ = pCallback;
     }
 
     pub fn RegisterCallResult(pCallback: ?*anyopaque, hAPICall: t.SteamAPICall_t) callconv(.C) void {
-        log.info("RegisterCallResult", .{});
+        l.info("RegisterCallResult", .{});
         _ = pCallback;
         _ = hAPICall;
 
     }
 
     pub fn UnregisterCallResult(pCallback: ?*anyopaque, hAPICall: t.SteamAPICall_t ) callconv(.C) void {
-        log.info("UnregisterCallResult", .{});
+        l.info("UnregisterCallResult", .{});
         _ = pCallback;
         _ = hAPICall;
     }
 
     pub fn GetHSteamUser() callconv(.C) t.HSteamUser {
-        log.info("GetHSteamUser", .{});
+        l.info("GetHSteamUser", .{});
         return 1;
     }
 
     pub fn GetHSteamPipe() callconv(.C) t.HSteamPipe {
-        log.info("GetHSteamPipe", .{});
+        l.info("GetHSteamPipe", .{});
         return 1;
     }
 };
 
 pub const SteamGameServer = struct {
+    const l = std.log.scoped(.SteamGameServer);
+
     pub fn GetHSteamUser() callconv(.C) t.HSteamUser {
-        log.info("SGS GetHSteamUser", .{});
+        l.info("GetHSteamUser", .{});
         return 1;
     }
 
     pub fn GetHSteamPipe() callconv(.C) t.HSteamPipe {
-        log.info("SGS GetHSteamPipe", .{});
+        l.info("GetHSteamPipe", .{});
         return 1;
     }
 
     pub fn RunCallbacks() callconv(.C) void {
-        log.info("SGS RunCallbacks", .{});
+        l.info("RunCallbacks", .{});
     }
 
     pub fn Shutdown() callconv(.C) void {
-        log.info("SGS Shutdown", .{});
+        l.info("Shutdown", .{});
     }
 };
 
 pub const SteamInternal = struct {
+    const l = std.log.scoped(.SteamInternal);
+
     pub const GameServer = struct {
+        const l1 = std.log.scoped(.SteamInternalGameServer);
+
         pub fn Init(unIP: u32, usLegacySteamPort: u16, usGamePort: u16, usQueryPort: u16, eServerMode: t.EServerMode, pchVersionString: [*c]const u8) callconv(.C) bool {
+            l1.info("Init", .{});
             _ = unIP;
             _ = usLegacySteamPort;
             _ = usGamePort;
@@ -114,31 +129,30 @@ pub const SteamInternal = struct {
     };
 
     pub fn ContextInit(pContextInitData: ?*anyopaque) callconv(.C) ?*anyopaque {
-        log.info("ContextInit", .{});
+        l.info("ContextInit", .{});
         _ = pContextInitData;
         return undefined;
     }
 
     pub fn CreateInterface(ver: [*c]const u8) callconv(.C) ?*anyopaque {
-        log.info("CreateInterface", .{});
+        l.info("CreateInterface", .{});
         _ = ver;
         return undefined;
     }
 
     pub fn FindOrCreateUserInterface(hSteamUser: t.HSteamUser, pszVersion: [*c]const u8) callconv(.C) ?*anyopaque {
-        log.info("FindOrCreateUserInterface", .{});
+        l.info("FindOrCreateUserInterface", .{});
         _ = hSteamUser;
         _ = pszVersion;
         return undefined;
     }
 
     pub fn FindOrCreateGameServerInterface(hSteamUser: t.HSteamUser, pszVersion: [*c]const u8) callconv(.C) ?*anyopaque {
-        log.info("FindOrCreateGameServerInterface", .{});
+        l.info("FindOrCreateGameServerInterface", .{});
         _ = hSteamUser;
         _ = pszVersion;
         return undefined;
     }
-
 };
 
 comptime {

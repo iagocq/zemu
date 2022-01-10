@@ -14,16 +14,18 @@ const impl = struct {
     const SteamAPI = @import("impl.zig");
 };
 
-comptime { _ = impl; }
+comptime {
+    _ = impl;
+    _ = SteamAPI;
+}
 
-const verbose = true;
+const options = @import("options.zig");
 
 const std = @import("std");
 const log = std.log;
 
 fn PathType(root: anytype, comptime path: []const []const u8) type {
-    if (path.len == 0) return void;
-    if (!@hasDecl(root, path[0])) return void;
+    if (path.len == 0 or !@hasDecl(root, path[0])) return void;
 
     const current = @field(root, path[0]);
     if (path.len == 1) return @TypeOf(current);
@@ -54,11 +56,10 @@ inline fn printArgs(name: []const u8, args: anytype, args_names: anytype) void {
     inline while (i < args.len) : (i += 1) {
         log.debug("----\t{s} = {any}\n", .{ args_names[i], args[i] });
     }
-    log.debug("-------------------------------\n", .{});
 }
 
-pub inline fn callImplFn(comptime path: []const []const u8, args: anytype, args_names: anytype, comptime fn_type: type) (@typeInfo(fn_type).Fn.return_type orelse void) {
-    if (verbose) {
+pub inline fn callImplFn(comptime path: []const []const u8, args: anytype, args_names: anytype, comptime FnType: type) (@typeInfo(FnType).Fn.return_type orelse void) {
+    if (options.verbose) {
         comptime var name = pathToName(path, '.');
         printArgs(name, args, args_names);
     }
@@ -66,7 +67,7 @@ pub inline fn callImplFn(comptime path: []const []const u8, args: anytype, args_
     comptime var maybe_func = getPath(impl, path);
     if (maybe_func) |func| {
         const ret = @call(.{ .modifier = .always_inline }, func, args);
-        if (verbose) {
+        if (options.verbose) {
             log.debug("ret = {any}\n", .{ ret });
         }
         return ret;
@@ -101,11 +102,6 @@ fn exportAllSub(root: anytype, current: anytype, path: anytype) void {
 
 pub fn exportAll(root: anytype, path: anytype) void {
     exportAllSub(root, root, path);
-}
-
-comptime {
-    @setEvalBranchQuota(1000000);
-    exportAll(SteamAPI, SteamAPI.p);
 }
 
 pub const size_t = usize;
